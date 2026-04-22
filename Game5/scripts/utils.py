@@ -4,7 +4,7 @@ import os
 BASE_IMG_PATH = os.path.join(os.path.dirname(__file__), '..', 'sprites')
 
 def load_image(image):
-    sprite : str = pygame.image.load(os.path.join(BASE_IMG_PATH, image))
+    sprite = pygame.image.load(os.path.join(BASE_IMG_PATH, image))
     rect: pygame.Rect = sprite.get_rect()
     return(sprite, rect)
 

@@ -1,5 +1,6 @@
 import pygame
 import scripts.utils as UTILS
+import scripts.movement as MOVEMENT
 from scripts.tilemap import Tilemap
 
 #todo gravity count (3 flips per checkpoint)
@@ -11,7 +12,7 @@ class Game:
         pygame.init()
         pygame.font.init()
 
-        pygame.display.set_caption('gravity_state flip')
+        pygame.display.set_caption('Gravity Flip')
 
         self.SCREEN_RATIO = {"screen_x": 640, "screen_y": 640}
         self.screen = pygame.display.set_mode((self.SCREEN_RATIO["screen_x"], self.SCREEN_RATIO["screen_y"]))
@@ -31,6 +32,9 @@ class Game:
         self.x = self.SCREEN_RATIO["screen_x"] // 2
         self.y = self.SCREEN_RATIO["screen_y"] // 2
 
+        self.x = 0
+        self.y = 0
+
         self.assets = {
             'decor': UTILS.load_images('tiles/decor'),
             'grass': UTILS.load_images('tiles/grass'),
@@ -44,14 +48,6 @@ class Game:
         self.player_rect = self.player_sprite.get_rect(center=(self.x, self.y))
         
         self.tilemap = Tilemap(self, tile_size=16)
-
-    def gravity(self, delta_time):
-        self.vel_y += self.GRAVITY * self.gravity_state
-        self.vel_y *= self.DAMPING
-
-        self.vel_y = max(-self.MAX_ACCELERATION, min(self.MAX_ACCELERATION, self.vel_y))
-
-        self.y += self.vel_y * delta_time * 60
 
     def run(self):
         running = True
@@ -77,7 +73,17 @@ class Game:
                     if event.key == pygame.K_ESCAPE:
                         running = False
 
-            self.gravity(delta_time)
+            keys = pygame.key.get_pressed()
+
+            new_x = self.x
+            if keys[pygame.K_a]:
+                new_x -= 5
+            if keys[pygame.K_d]:
+                new_x += 5
+
+            self.x = MOVEMENT.move(self, new_x)
+
+            MOVEMENT.gravity(self, delta_time)
 
             self.player_rect.center = (self.x, self.y)
             self.screen.blit(self.player_sprite, self.player_rect)
