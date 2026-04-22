@@ -53,12 +53,8 @@ def gravity(self, delta_time):
             self.vel_y = 0
             return
     
-<<<<<<< HEAD
     self.y = new_y
 
 def jump(self, jumphight, y, gravity_state):
     y += jumphight * -gravity_state
     return y
-=======
-    self.y = new_y
->>>>>>> 1326d861f98ef8f62d1441627de72b03da835905
