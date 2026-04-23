@@ -21,19 +21,24 @@ class Game:
         self.FPS = 24
 
         self.BG = (255, 255, 255)
-        self.MAX_ACCELERATION = 4
+        self.MAX_ACCELERATION = 2
+        self.PLAYER_ACCELERATION = 0.1
         self.GRAVITY = 0.1
         self.DAMPING = 0.99
         self.tile_size = 16
-        self.jump_height = 2
-        self.jump_total = 0
+        self.jump_height = 1.3
+        self.WALL_JUMP_X_BOOST = 60
+        self.dubble_jump_used = False
+        self.wallhit = False
 
         self.vel_y = 0
         self.gravity_state = 1
 
-        self.x = self.SCREEN_RATIO["screen_x"] // 2
-        self.y = self.SCREEN_RATIO["screen_y"] // 2
+        self.x =self.x_start = self.SCREEN_RATIO["screen_x"] // 2
+        self.y = self.y_start = self.SCREEN_RATIO["screen_y"] // 2
         self.PLAYER_MAX_SPEED = 7.5
+
+        self.new_x = self.x
 
         self.assets = {
             'decor': UTILS.load_images('tiles/decor'),
@@ -66,36 +71,49 @@ class Game:
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_r:
                         self.gravity_state *= -1
-
-                    if event.key == pygame.K_SPACE:
-                        MOVEMENT.jump(self)
                     
                     if event.key == pygame.K_0:
-                        self.y -= 50
+                        self.y -= 50 * self.gravity_state
+                    
+                    if not self.dubble_jump_used and event.key == pygame.K_SPACE:
+                        MOVEMENT.jump(self)
 
                     if event.type == pygame.KEYDOWN:
                         if event.key == pygame.K_c and pygame.key.get_mods() & pygame.KMOD_CTRL:
                             running = False
 
-            keys = pygame.key.get_pressed()
+            self.keys = pygame.key.get_pressed()
+            if not self.wallhit:
+                if self.keys[pygame.K_a]:
+                    self.new_x += -self.PLAYER_MAX_SPEED
+                if self.keys[pygame.K_d]:
+                    self.new_x += self.PLAYER_MAX_SPEED
 
-            new_x = self.x
-            if keys[pygame.K_a]:
-                new_x -= self.PLAYER_MAX_SPEED
-            if keys[pygame.K_d]:
-                new_x += self.PLAYER_MAX_SPEED
+            if self.dubble_jump_used and self.keys[pygame.K_SPACE]:
+                MOVEMENT.jump(self)
 
-            self.x = MOVEMENT.move(self, new_x)
+            new_x = self.x + (self.new_x - self.x) * self.PLAYER_ACCELERATION
 
+
+            self.x, self.wallhit = MOVEMENT.move(self, new_x)
             MOVEMENT.gravity(self, delta_time)
 
             self.player_rect.center = (self.x, self.y)
+
+            if MOVEMENT.check_collision(self, self.tilemap, self.gravity_state, self.tile_size, self.player_rect) == 'kill':
+                self.x = self.x_start
+                self.y = self.y_start
+                self.vel_y = 0
+                self.gravity_state = 1
+
             self.screen.blit(self.player_sprite, self.player_rect)
 
             pygame.display.flip()
-
-        pygame.quit()
+        
+            print(self.new_x, self.wallhit)
 
 if __name__ == "__main__":
     game = Game()
     game.run()
+
+    pygame.quit()

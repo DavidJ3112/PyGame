@@ -8,23 +8,26 @@ class Tilemap:
         self.offgrid_tiles = []
 
         for i in range(10):
-            self.tile_map.append({'type': 'grass', 'variant': 1, 'gravity': 1, 'pos': (3 + i, 20)})
-            self.tile_map.append({'type': 'stone', 'variant': 1, 'gravity': 1, 'pos': (3 + i, 21)})
-            self.tile_map.append({'type': 'stone', 'variant': 1, 'gravity': 1, 'pos': (3 + i, 22)})
-            self.tile_map.append({'type': 'stone', 'variant': 1, 'gravity': 1, 'pos': (3 + i, 23)})
-            self.tile_map.append({'type': 'grass', 'variant': 1, 'gravity': 1, 'pos': (20 + i, 20)})
-            self.tile_map.append({'type': 'stone', 'variant': 1, 'gravity': 1, 'pos': (20 + i, 21)})
-            self.tile_map.append({'type': 'stone', 'variant': 1, 'gravity': 1, 'pos': (20 + i, 22)})
-            self.tile_map.append({'type': 'stone', 'variant': 1, 'gravity': 1, 'pos': (20 + i, 23)})
+            self.tile_map.append({'type': 'grass', 'variant': 1, 'gravity': 1, 'player_kill': False, 'pos': (3 + i, 20)})
+            self.tile_map.append({'type': 'stone', 'variant': 1, 'gravity': 1, 'player_kill': False, 'pos': (3 + i, 21)})
+            self.tile_map.append({'type': 'stone', 'variant': 1, 'gravity': 1, 'player_kill': False, 'pos': (3 + i, 22)})
+            self.tile_map.append({'type': 'stone', 'variant': 1, 'gravity': 1, 'player_kill': False, 'pos': (3 + i, 23)})
+            self.tile_map.append({'type': 'grass', 'variant': 1, 'gravity': 1, 'player_kill': False, 'pos': (20 + i, 20)})
+            self.tile_map.append({'type': 'stone', 'variant': 1, 'gravity': 1, 'player_kill': False, 'pos': (20 + i, 21)})
+            self.tile_map.append({'type': 'stone', 'variant': 1, 'gravity': 1, 'player_kill': False, 'pos': (20 + i, 22)})
+            self.tile_map.append({'type': 'stone', 'variant': 1, 'gravity': 1, 'player_kill': False, 'pos': (20 + i, 23)})
 
-            self.tile_map.append({'type': 'stone', 'variant': 1, 'gravity': -1, 'pos': (3 + i, 0)})
-            self.tile_map.append({'type': 'stone', 'variant': 1, 'gravity': -1, 'pos': (3 + i, 1)})
-            self.tile_map.append({'type': 'stone', 'variant': 1, 'gravity': -1, 'pos': (3 + i, 2)})
-            self.tile_map.append({'type': 'grass', 'variant': 1, 'gravity': -1, 'pos': (3 + i, 3)})
-            self.tile_map.append({'type': 'stone', 'variant': 1, 'gravity': -1, 'pos': (20 + i, 0)})
-            self.tile_map.append({'type': 'stone', 'variant': 1, 'gravity': -1, 'pos': (20 + i, 1)})
-            self.tile_map.append({'type': 'stone', 'variant': 1, 'gravity': -1, 'pos': (20 + i, 2)})
-            self.tile_map.append({'type': 'grass', 'variant': 1, 'gravity': -1, 'pos': (20 + i, 3)})
+            self.tile_map.append({'type': 'stone', 'variant': 1, 'gravity': -1, 'player_kill': False, 'pos': (3 + i, 0)})
+            self.tile_map.append({'type': 'stone', 'variant': 1, 'gravity': -1, 'player_kill': False, 'pos': (3 + i, 1)})
+            self.tile_map.append({'type': 'stone', 'variant': 1, 'gravity': -1, 'player_kill': False, 'pos': (3 + i, 2)})
+            self.tile_map.append({'type': 'grass', 'variant': 1, 'gravity': -1, 'player_kill': False, 'pos': (3 + i, 3)})
+            self.tile_map.append({'type': 'stone', 'variant': 1, 'gravity': -1, 'player_kill': False, 'pos': (20 + i, 0)})
+            self.tile_map.append({'type': 'stone', 'variant': 1, 'gravity': -1, 'player_kill': False, 'pos': (20 + i, 1)})
+            self.tile_map.append({'type': 'stone', 'variant': 1, 'gravity': -1, 'player_kill': False, 'pos': (20 + i, 2)})
+            self.tile_map.append({'type': 'grass', 'variant': 1, 'gravity': -1, 'player_kill': False, 'pos': (20 + i, 3)})
+
+        for i in range(40):
+            self.tile_map.append({'type': 'grass', 'variant': 0, 'gravity': 1, 'player_kill': True, 'pos': (i, 39)})
     
     def render(self, surf):
         for tile in self.offgrid_tiles:
