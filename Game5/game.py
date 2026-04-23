@@ -109,8 +109,6 @@ class Game:
             self.screen.blit(self.player_sprite, self.player_rect)
 
             pygame.display.flip()
-        
-            print(self.new_x, self.wallhit)
 
 if __name__ == "__main__":
     game = Game()
