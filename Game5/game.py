@@ -25,16 +25,15 @@ class Game:
         self.GRAVITY = 0.1
         self.DAMPING = 0.99
         self.tile_size = 16
-        self.jumphight = 16
+        self.jump_height = 2
+        self.jump_total = 0
 
         self.vel_y = 0
         self.gravity_state = 1
 
         self.x = self.SCREEN_RATIO["screen_x"] // 2
         self.y = self.SCREEN_RATIO["screen_y"] // 2
-
-        self.x = 0
-        self.y = 0
+        self.PLAYER_MAX_SPEED = 7.5
 
         self.assets = {
             'decor': UTILS.load_images('tiles/decor'),
@@ -69,18 +68,22 @@ class Game:
                         self.gravity_state *= -1
 
                     if event.key == pygame.K_SPACE:
-                        self.y = MOVEMENT.jump(self, self.jumphight, self.y, self.gravity_state)
+                        MOVEMENT.jump(self)
+                    
+                    if event.key == pygame.K_0:
+                        self.y -= 50
 
-                    if event.key == pygame.K_ESCAPE:
-                        running = False
+                    if event.type == pygame.KEYDOWN:
+                        if event.key == pygame.K_c and pygame.key.get_mods() & pygame.KMOD_CTRL:
+                            running = False
 
             keys = pygame.key.get_pressed()
 
             new_x = self.x
             if keys[pygame.K_a]:
-                new_x -= 5
+                new_x -= self.PLAYER_MAX_SPEED
             if keys[pygame.K_d]:
-                new_x += 5
+                new_x += self.PLAYER_MAX_SPEED
 
             self.x = MOVEMENT.move(self, new_x)
 
