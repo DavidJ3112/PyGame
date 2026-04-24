@@ -55,8 +55,6 @@ def jump(self):
             self.vel_y = self.jump_height * -self.gravity_state
     else:
         self.vel_y = self.jump_height * -self.gravity_state
-        if self.wallhit:
-            self.new_x += self.WALL_JUMP_X_BOOST * (1 if self.keys[pygame.K_d] else -1 if self.keys[pygame.K_a] else 0)
         self.dubble_jump_used = True
 
 def is_on_ground(self, offset):

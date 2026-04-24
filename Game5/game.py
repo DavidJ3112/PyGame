@@ -17,6 +17,8 @@ class Game:
         self.SCREEN_RATIO = {"screen_x": 640, "screen_y": 640}
         self.screen = pygame.display.set_mode((self.SCREEN_RATIO["screen_x"], self.SCREEN_RATIO["screen_y"]))
 
+        self.my_font = pygame.font.SysFont('arial', 30)
+
         self.clock = pygame.time.Clock()
         self.FPS = 24
 
@@ -33,9 +35,9 @@ class Game:
 
         self.vel_y = 0
         self.gravity_state = 1
+        self.camera_smoothing = 0.1
 
-        self.x =self.x_start = self.SCREEN_RATIO["screen_x"] // 2
-        self.y = self.y_start = self.SCREEN_RATIO["screen_y"] // 2
+        self.x, self.y = self.x_start, self.y_start = (self.SCREEN_RATIO["screen_x"] // 2, self.SCREEN_RATIO["screen_y"] // 2)
         self.PLAYER_MAX_SPEED = 7.5
 
         self.new_x = self.x
@@ -53,16 +55,28 @@ class Game:
         self.player_rect = self.player_sprite.get_rect(center=(self.x, self.y))
         
         self.tilemap = Tilemap(self, tile_size=16)
+        self.MAP_INDEX = 0
+        self.tilemap.load_map(self.MAP_INDEX)
+
+        self.x_start, self.y_start = self.tilemap.player_spawn_points[0]
+
+        self.camera_x = 0
+        self.camera_y = 0
 
     def run(self):
         running = True
 
         while running:
+            self.screen.fill(self.BG)
             delta_time = max(0.001, min(0.1, self.clock.tick(self.FPS) / 1000))
 
-            self.screen.fill(self.BG)
-            
-            self.tilemap.render(self.screen)
+            self.camera_target_x = self.x - self.SCREEN_RATIO["screen_x"] // 2
+            self.camera_target_y = self.y - self.SCREEN_RATIO["screen_y"] // 2
+
+            self.camera_x += (self.camera_target_x - self.camera_x) * self.camera_smoothing 
+            self.camera_y += (self.camera_target_y - self.camera_y) * self.camera_smoothing 
+
+            self.tilemap.render(self.screen, self.camera_x, self.camera_y)
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -102,11 +116,18 @@ class Game:
 
             if MOVEMENT.check_collision(self, self.tilemap, self.gravity_state, self.tile_size, self.player_rect) == 'kill':
                 self.x = self.x_start
+                self.new_x = self.x_start
                 self.y = self.y_start
                 self.vel_y = 0
                 self.gravity_state = 1
 
-            self.screen.blit(self.player_sprite, self.player_rect)
+            screen_player_rect = self.player_rect.copy()
+            screen_player_rect.x -= self.camera_x
+            screen_player_rect.y -= self.camera_y
+            self.screen.blit(self.player_sprite, screen_player_rect)
+
+            # ! text_surface = self.my_font.render(f'Player Position: ({self.x:.0f}, {self.y:.0f}), ({new_x:.0f}', False, (0, 0, 0))
+            # ! self.screen.blit(text_surface, (0,0))
 
             pygame.display.flip()
 
