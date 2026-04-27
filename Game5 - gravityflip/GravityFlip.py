@@ -5,7 +5,6 @@ from scripts.tilemap import Tilemap
 from scripts import debug as DEBUG
 
 #todo gravity count (3 flips per checkpoint)
-#todo normal jumping
 #todo save states
 
 class Game:
