@@ -38,8 +38,10 @@ def move(self, x):
         if new_rect.colliderect(tile_rect):
             if x > self.x:  # moving right
                 x = tile_rect.left - self.player_rect.width / 2
+                self.player_movement_state_x = 'hitting_wall_right'
             elif x < self.x:  # moving left
                 x = tile_rect.right + self.player_rect.width / 2
+                self.player_movement_state_x = 'hitting_wall_left'
 
             self.wallhit = True
             return x, True
@@ -65,9 +67,14 @@ def gravity(self, delta_time):
         if new_rect.colliderect(tile_rect):
             if self.vel_y > 0:  # falling down
                 new_y = tile_rect.top - self.player_rect.height / 2
+                self.player_movement_state_y = 'falling'
                 self.dubble_jump_used = False
             elif self.vel_y < 0:  # jumping up
                 new_y = tile_rect.bottom + self.player_rect.height / 2
+                self.player_movement_state_y = 'jumping'
+            
+            if self.vel_y != 0:
+                self.player_movement_state_y = 'idle'
 
             self.vel_y = 0
             self.y = new_y
@@ -80,6 +87,7 @@ def jump(self):
     if self.dubble_jump_used:
         if is_on_ground(self, offset=10):
             self.vel_y = self.jump_height * -self.gravity_state
+            self.player_movement_state_y = 'jumping'
     else:
         self.vel_y = self.jump_height * -self.gravity_state
         self.dubble_jump_used = True

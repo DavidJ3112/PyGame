@@ -23,6 +23,10 @@ class Game:
         self.clock = pygame.time.Clock()
         self.FPS = 24
 
+        self.player_facing = 1
+        self.player_movement_state_x = 'idle'
+        self.player_movement_state_y = 'idle'
+
         self.BG = (255, 255, 255)
         self.MAX_ACCELERATION = 2
         self.PLAYER_ACCELERATION = 0.1
@@ -37,6 +41,11 @@ class Game:
         self.vel_y = 0
         self.gravity_state = 1
         self.camera_smoothing = 0.1
+
+        self.last_gravity_state = self.gravity_state
+        self.last_player_movement_state_x = self.player_movement_state_x
+        self.last_player_movement_state_y = self.player_movement_state_y
+        self.last_player_facing = self.player_facing
 
         self.x, self.y = self.x_start, self.y_start = (self.SCREEN_RATIO["screen_x"] // 2, self.SCREEN_RATIO["screen_y"] // 2)
         self.PLAYER_MAX_SPEED = 7.5
@@ -55,9 +64,10 @@ class Game:
         self.player_sprite = self.assets['player'][0]
         self.player_rect = self.player_sprite.get_rect(center=(self.x, self.y))
         
+        self.map_generated = False
         self.tilemap = Tilemap(self, tile_size=16)
         self.MAP_INDEX = 0
-        self.tilemap.load_map(self.MAP_INDEX)
+        self.map_generated = self.tilemap.load_map(self.MAP_INDEX)
 
         self.x_start, self.y_start = self.tilemap.player_spawn_points[0]
 
@@ -101,13 +111,19 @@ class Game:
             if not self.wallhit:
                 if self.keys[pygame.K_a]:
                     self.new_x += -self.PLAYER_MAX_SPEED
+                    self.player_facing = -1
+                    self.player_movement_state_x = 'moving_left'
                 if self.keys[pygame.K_d]:
                     self.new_x += self.PLAYER_MAX_SPEED
+                    self.player_facing = 1
+                    self.player_movement_state_x = 'moving_right'
 
             if self.dubble_jump_used and self.keys[pygame.K_SPACE]:
                 MOVEMENT.jump(self)
 
             new_x = self.x + (self.new_x - self.x) * self.PLAYER_ACCELERATION
+            if f"{new_x:.0f}" == f"{self.x:.0f}":
+                self.player_movement_state_x = 'idle'
 
             self.player_rect.center = (self.x, self.y)
             self.player_rect = self.player_sprite.get_rect(center=(self.x, self.y + 0.25 * self.gravity_state))
@@ -116,6 +132,8 @@ class Game:
 
             self.x, self.wallhit = MOVEMENT.move(self, new_x)
             MOVEMENT.gravity(self, delta_time)
+
+            self.player_sprite = UTILS.player_sprite(self)
 
             if self.collision_result == 'kill':
                 self.x = self.x_start
@@ -129,7 +147,11 @@ class Game:
             screen_player_rect.y -= self.camera_y
             self.screen.blit(self.player_sprite, screen_player_rect)
 
-            DEBUG.DebugPrinter.debug_info(self, debug_type = "ALL")
+            if self.map_generated:
+                DEBUG.DebugPrinter.map_info(self.tilemap.debug_map_info)
+                self.map_generated = False
+
+            DEBUG.DebugPrinter.debug_info(self, debug_type = "NONE")
 
             pygame.display.flip()
 

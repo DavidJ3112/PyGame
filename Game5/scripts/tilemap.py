@@ -8,9 +8,12 @@ class Tilemap:
         self.offgrid_tiles = []
 
     def load_map(self, map_index):
+        self.map_generated = True
         if map_index == 0:
             from maps.map_0 import Map_0
-            Map_0(self)
+            self.debug_map_info = Map_0(self)
+        
+        return self.map_generated
 
     def render(self, surf, camera_x, camera_y):
         for tile in self.offgrid_tiles:

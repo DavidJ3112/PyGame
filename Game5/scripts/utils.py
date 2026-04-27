@@ -1,5 +1,6 @@
 import pygame
 import os
+import pygame
 
 BASE_IMG_PATH = os.path.join(os.path.dirname(__file__), '..', 'sprites', 'images')
 
@@ -18,3 +19,23 @@ def load_images(path):
         images.append(sprite)
 
     return images
+
+
+def player_sprite(self):
+    if self.gravity_state != self.last_gravity_state:
+        if self.gravity_state == 1:
+            self.last_gravity_state = self.gravity_state
+            self.player_sprite = pygame.transform.flip(self.player_sprite, False, True)
+        else:
+            self.last_gravity_state = self.gravity_state
+            self.player_sprite = pygame.transform.flip(self.player_sprite, False, True)
+
+    if self.player_facing != self.last_player_facing:
+        if self.player_facing == 1:
+            self.last_player_facing = self.player_facing
+            self.player_sprite = pygame.transform.flip(self.player_sprite, True, False)
+        elif self.player_facing == -1:
+            self.last_player_facing = self.player_facing
+            self.player_sprite = pygame.transform.flip(self.player_sprite, True, False)
+
+    return self.player_sprite

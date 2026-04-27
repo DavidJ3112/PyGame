@@ -1,7 +1,15 @@
+import sys, os
+
+BASE_DIR = os.path.dirname(__file__)
+PARENT = os.path.abspath(os.path.join(BASE_DIR, '..'))
+ROOT = os.path.abspath(os.path.join(BASE_DIR, '..', '..'))
+
+sys.path.extend([PARENT, ROOT])
+
+from general_scripts.ANSI import ANSI
+
 def Map_0(self):
     self.player_spawn_points = [(100, 296), (100, 300), (300, 100), (300, 300)]
-
-    print(f"Map 0 loaded, spawn point: {self.player_spawn_points[0]}")
 
     for i in range(10):
         self.tile_map.append({'type': 'grass', 'variant': 1, 'gravity': 1, 'player_kill': False, 'pos': (3 + i, 20)})
@@ -24,3 +32,10 @@ def Map_0(self):
 
     for i in range(40):
         self.tile_map.append({'type': 'grass', 'variant': 0, 'gravity': 1, 'player_kill': True, 'pos': (i, 39)})
+
+    debug_map_info = (
+        f"{ANSI.GREEN}Map 0 loaded with {len(self.tile_map)} tiles and {len(self.offgrid_tiles)} offgrid tiles.{ANSI.RESET}"
+        f"{ANSI.NEW_LINE}{ANSI.CYAN}Player spawn points: {', '.join([f'({x}, {y})' for x, y in self.player_spawn_points])}{ANSI.RESET}"
+    )
+
+    return debug_map_info
