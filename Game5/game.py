@@ -49,7 +49,7 @@ class Game:
             'large_decor': UTILS.load_images('tiles/large_decor'),
             'spawners': UTILS.load_images('tiles/spawners'),
             'stone': UTILS.load_images('tiles/stone'),
-            'player': UTILS.load_image('player.png')
+            'player': UTILS.load_image('entities/player/0.png')
         }
 
         self.player_sprite = self.assets['player'][0]

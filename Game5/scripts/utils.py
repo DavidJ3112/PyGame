@@ -1,7 +1,7 @@
 import pygame
 import os
 
-BASE_IMG_PATH = os.path.join(os.path.dirname(__file__), '..', 'sprites')
+BASE_IMG_PATH = os.path.join(os.path.dirname(__file__), '..', 'sprites', 'images')
 
 def load_image(image):
     sprite = pygame.image.load(os.path.join(BASE_IMG_PATH, image))
@@ -10,7 +10,7 @@ def load_image(image):
 
 def load_images(path):
     images = []
-    full_path = os.path.join(BASE_IMG_PATH, 'images', path)
+    full_path = os.path.join(BASE_IMG_PATH, path)
 
     for img_name in sorted(os.listdir(full_path)):
         img_path = os.path.join(full_path, img_name)
