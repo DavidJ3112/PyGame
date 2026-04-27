@@ -1,15 +1,3 @@
-"""
-ansi.py - ANSI escape code constants for use in terminal output.
-
-Usage:
-    from ansi import ANSI
-
-    print(f"{ANSI.RED}Hello, World!{ANSI.RESET}")
-    print(f"{ANSI.BOLD}{ANSI.BLUE}Bold Blue Text{ANSI.RESET}")
-    print(f"{ANSI.BG_GREEN}{ANSI.BLACK}Black on Green{ANSI.RESET}")
-"""
-
-
 class ANSI:
     #* ── Main ───────────────────────────────────────────────────────────────
     RESET       = "\033[0m"
@@ -35,7 +23,7 @@ class ANSI:
     CYAN        = "\033[36m"
     WHITE       = "\033[37m"
 
-    #* Bright variants
+    #* ── Bright variants ────────────────────────────────────────────────────
     BRIGHT_BLACK   = "\033[90m"
     BRIGHT_RED     = "\033[91m"
     BRIGHT_GREEN   = "\033[92m"
