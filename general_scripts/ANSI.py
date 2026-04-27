@@ -11,21 +11,21 @@ Usage:
 
 
 class ANSI:
-    # ── Reset ──────────────────────────────────────────────────────────────
+    #* ── Main ───────────────────────────────────────────────────────────────
     RESET       = "\033[0m"
     NEW_LINE    = "\n"
 
-    # ── Text styles ────────────────────────────────────────────────────────
+    #* ── Text styles ────────────────────────────────────────────────────────
     BOLD        = "\033[1m"
     DIM         = "\033[2m"
     ITALIC      = "\033[3m"
     UNDERLINE   = "\033[4m"
     BLINK       = "\033[5m"
-    INVERSE     = "\033[7m"   # swap fg/bg
+    INVERSE     = "\033[7m"
     HIDDEN      = "\033[8m"
     STRIKE      = "\033[9m"
 
-    # ── Foreground (text) colors ───────────────────────────────────────────
+    #* ── Foreground (text) colors ───────────────────────────────────────────
     BLACK       = "\033[30m"
     RED         = "\033[31m"
     GREEN       = "\033[32m"
@@ -35,8 +35,8 @@ class ANSI:
     CYAN        = "\033[36m"
     WHITE       = "\033[37m"
 
-    # Bright variants
-    BRIGHT_BLACK   = "\033[90m"   # often rendered as dark grey
+    #* Bright variants
+    BRIGHT_BLACK   = "\033[90m"
     BRIGHT_RED     = "\033[91m"
     BRIGHT_GREEN   = "\033[92m"
     BRIGHT_YELLOW  = "\033[93m"
@@ -45,7 +45,7 @@ class ANSI:
     BRIGHT_CYAN    = "\033[96m"
     BRIGHT_WHITE   = "\033[97m"
 
-    # ── Background colors ──────────────────────────────────────────────────
+    #* ── Background colors ──────────────────────────────────────────────────
     BG_BLACK    = "\033[40m"
     BG_RED      = "\033[41m"
     BG_GREEN    = "\033[42m"
@@ -55,7 +55,7 @@ class ANSI:
     BG_CYAN     = "\033[46m"
     BG_WHITE    = "\033[47m"
 
-    # Bright background variants
+    #* Bright background variants
     BG_BRIGHT_BLACK   = "\033[100m"
     BG_BRIGHT_RED     = "\033[101m"
     BG_BRIGHT_GREEN   = "\033[102m"
@@ -65,7 +65,7 @@ class ANSI:
     BG_BRIGHT_CYAN    = "\033[106m"
     BG_BRIGHT_WHITE   = "\033[107m"
 
-    # ── Helper methods ─────────────────────────────────────────────────────
+    #* ── Helper methods ─────────────────────────────────────────────────────
     @staticmethod
     def rgb(r: int, g: int, b: int) -> str:
         """True-color (24-bit) foreground: ANSI.rgb(255, 128, 0)"""
@@ -96,7 +96,7 @@ class ANSI:
         return "".join(codes) + text + ANSI.RESET
 
 
-# ── Quick demo ─────────────────────────────────────────────────────────────
+#* ── Quick demo ─────────────────────────────────────────────────────────────
 if __name__ == "__main__":
     print(f"{ANSI.RED}Red text{ANSI.RESET}")
     print(f"{ANSI.BOLD}{ANSI.BLUE}Bold blue{ANSI.RESET}")
