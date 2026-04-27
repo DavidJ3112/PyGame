@@ -9,6 +9,11 @@ class DebugPrinter:
         pass
     def map_info(info):
         print(info)
+
+    def info(info):
+        print(f"{ANSI.GREEN}INFO: {info}{ANSI.RESET}")
+    def warning(info):
+        print(f"{ANSI.YELLOW}WARNING: {info}{ANSI.RESET}")
     def debug_info(self, debug_type):
         RESET = "\033[0m"
         def field(color, label, value, width=None):

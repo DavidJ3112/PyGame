@@ -4,9 +4,6 @@ import scripts.movement as MOVEMENT
 from scripts.tilemap import Tilemap
 from scripts import debug as DEBUG
 
-#todo gravity count (3 flips per checkpoint)
-#todo save states
-
 class Game:
     def __init__(self):
         pygame.init()
@@ -32,7 +29,7 @@ class Game:
         self.GRAVITY = 0.1
         self.DAMPING = 0.99
         self.tile_size = 16
-        self.jump_height = 1.3
+        self.jump_height = 15
         self.WALL_JUMP_X_BOOST = 60
         self.dubble_jump_used = False
         self.wallhit = False
@@ -46,10 +43,7 @@ class Game:
         self.last_player_movement_state_y = self.player_movement_state_y
         self.last_player_facing = self.player_facing
 
-        self.x, self.y = self.x_start, self.y_start = (self.SCREEN_RATIO["screen_x"] // 2, self.SCREEN_RATIO["screen_y"] // 2)
         self.PLAYER_MAX_SPEED = 7.5
-
-        self.new_x = self.x
 
         self.assets = {
             'decor': UTILS.load_images('tiles/decor'),
@@ -57,21 +51,25 @@ class Game:
             'large_decor': UTILS.load_images('tiles/large_decor'),
             'spawners': UTILS.load_images('tiles/spawners'),
             'stone': UTILS.load_images('tiles/stone'),
+            'death_zones': UTILS.load_images('tiles/death/death_zones'),
             'player': UTILS.load_image('entities/player/0.png')
         }
-
-        self.player_sprite = self.assets['player'][0]
-        self.player_rect = self.player_sprite.get_rect(center=(self.x, self.y))
         
         self.map_generated = False
         self.tilemap = Tilemap(self, tile_size=16)
         self.MAP_INDEX = 0
         self.map_generated = self.tilemap.load_map(self.MAP_INDEX)
 
-        self.x_start, self.y_start = self.tilemap.player_spawn_points[0]
+        self.x_start, self.y_start, self.gravity_start = self.tilemap.player_spawn_points[0]
 
         self.camera_x = 0
         self.camera_y = 0
+
+        self.x = self.x_start
+        self.y = self.y_start
+        self.player_sprite = self.assets['player'][0]
+        self.player_rect = self.player_sprite.get_rect(center=(self.x, self.y))
+        self.new_x = self.x
 
     def run(self):
         running = True
@@ -134,12 +132,19 @@ class Game:
 
             self.player_sprite = UTILS.player_sprite(self)
 
+            spawn_point = UTILS.is_near(self)
+            
+            if spawn_point and (self.x_start != spawn_point[0] or self.y_start != spawn_point[1] or self.gravity_state != spawn_point[2]):
+                self.x_start, self.y_start, self.gravity_start = spawn_point
+                DEBUG.DebugPrinter.info(f"New spawn point: ({self.x_start}, {self.y_start}, {self.gravity_start})")
+
             if self.collision_result == 'kill':
                 self.x = self.x_start
                 self.new_x = self.x_start
                 self.y = self.y_start
                 self.vel_y = 0
-                self.gravity_state = 1
+                self.gravity_state = self.gravity_start
+                self.dubble_jump_used = False
 
             screen_player_rect = self.player_rect.copy()
             screen_player_rect.x -= self.camera_x

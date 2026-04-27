@@ -9,7 +9,7 @@ sys.path.extend([PARENT, ROOT])
 from general_scripts.ANSI import ANSI
 
 def Map_0(self):
-    self.player_spawn_points = [(100, 296), (100, 300), (300, 100), (300, 300)]
+    self.player_spawn_points = [(100, 296, 1), (400, 296, 1), (100, 100, -1), (400, 100, -1)]
 
     for i in range(10):
         self.tile_map.append({'type': 'grass', 'variant': 1, 'gravity': 1, 'player_kill': False, 'pos': (3 + i, 20)})
@@ -30,12 +30,12 @@ def Map_0(self):
         self.tile_map.append({'type': 'stone', 'variant': 1, 'gravity': -1, 'player_kill': False, 'pos': (20 + i, 2)})
         self.tile_map.append({'type': 'grass', 'variant': 1, 'gravity': -1, 'player_kill': False, 'pos': (20 + i, 3)})
 
-    for i in range(40):
-        self.tile_map.append({'type': 'grass', 'variant': 0, 'gravity': 1, 'player_kill': True, 'pos': (i, 39)})
+    for i in range(420):
+        self.tile_map.append({'type': 'death_zones', 'variant': 0, 'gravity': 1, 'player_kill': True, 'pos': (i-220, 60)})
 
     debug_map_info = (
         f"{ANSI.GREEN}Map 0 loaded with {len(self.tile_map)} tiles and {len(self.offgrid_tiles)} offgrid tiles.{ANSI.RESET}"
-        f"{ANSI.NEW_LINE}{ANSI.CYAN}Player spawn points: {', '.join([f'({x}, {y})' for x, y in self.player_spawn_points])}{ANSI.RESET}"
+        f"{ANSI.NEW_LINE}{ANSI.CYAN}Player spawn points: {', '.join([f'({x}, {y}, {gravity})' for x, y, gravity in self.player_spawn_points])}{ANSI.RESET}"
     )
 
     return debug_map_info
