@@ -2,6 +2,7 @@ import pygame
 import scripts.utils as UTILS
 import scripts.movement as MOVEMENT
 from scripts.tilemap import Tilemap
+from scripts import debug as DEBUG
 
 #todo gravity count (3 flips per checkpoint)
 #todo normal jumping
@@ -108,13 +109,15 @@ class Game:
 
             new_x = self.x + (self.new_x - self.x) * self.PLAYER_ACCELERATION
 
+            self.player_rect.center = (self.x, self.y)
+            self.player_rect = self.player_sprite.get_rect(center=(self.x, self.y + 0.25 * self.gravity_state))
+            self.collision_result = MOVEMENT.check_collision(self, self.tilemap, self.gravity_state, self.tile_size, self.player_rect)
+            self.player_rect = self.player_sprite.get_rect(center=(self.x, self.y))
 
             self.x, self.wallhit = MOVEMENT.move(self, new_x)
             MOVEMENT.gravity(self, delta_time)
 
-            self.player_rect.center = (self.x, self.y)
-
-            if MOVEMENT.check_collision(self, self.tilemap, self.gravity_state, self.tile_size, self.player_rect) == 'kill':
+            if self.collision_result == 'kill':
                 self.x = self.x_start
                 self.new_x = self.x_start
                 self.y = self.y_start
@@ -126,8 +129,7 @@ class Game:
             screen_player_rect.y -= self.camera_y
             self.screen.blit(self.player_sprite, screen_player_rect)
 
-            # ! text_surface = self.my_font.render(f'Player Position: ({self.x:.0f}, {self.y:.0f}), ({new_x:.0f}', False, (0, 0, 0))
-            # ! self.screen.blit(text_surface, (0,0))
+            DEBUG.DebugPrinter.debug_info(self, debug_type = "ALL")
 
             pygame.display.flip()
 
