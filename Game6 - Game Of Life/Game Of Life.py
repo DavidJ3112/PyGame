@@ -30,14 +30,13 @@ class GameOfLife:
         self.screen = pygame.display.set_mode(self.screen_ratios)
         pygame.display.set_caption("Game of Life")
         self.BGCOLOR = (50, 50, 50)
+        self.prev_update_interval = -1
 
         self.font = pygame.font.SysFont('arial', 20)
 
         self.cell_size = self.screen_ratios[0] // len(self.game_field)
         self.fps = 24
         self.clock = pygame.time.Clock()
-
-        self.randomize_field(0.2)
 
         self.prev_grid_x = -1
         self.prev_grid_y = -1
@@ -159,9 +158,13 @@ class GameOfLife:
                     self.update()
                 if event.key == pygame.K_SPACE and pygame.key.get_mods() & pygame.KMOD_CTRL:
                     if self.update_interval <= 10:
+                        self.prev_update_interval = self.update_interval
                         self.update_interval = 100
                     else:
-                        self.update_interval = 1
+                        if self.prev_update_interval >= 0 and self.prev_update_interval <= 10:
+                            self.update_interval = self.prev_update_interval
+                        else:
+                            self.update_interval = 1
             
             self.debug_log("all", f"{ANSI.BRIGHT_MAGENTA}Handled event: {event}{ANSI.RESET}")
     
@@ -183,7 +186,10 @@ class GameOfLife:
                     accumulator -= self.update_interval
 
             self.render()
-            font_text = self.font.render(f"Update Interval: {self.update_interval:.2f}s", True, (0, 255, 255))
+            if self.update_interval <= 10:
+                font_text = self.font.render(f"Update Interval: {self.update_interval:.2f}s", True, (0, 255, 255))
+            else:
+                font_text = self.font.render(f"Paused", True, (255, 0, 0))
             self.screen.blit(font_text, (10, 10))
             pygame.display.flip()
 
