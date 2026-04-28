@@ -106,11 +106,11 @@ class Game:
 
             self.keys = pygame.key.get_pressed()
             if not self.wallhit:
-                if self.keys[pygame.K_a]:
+                if self.keys[pygame.K_a] or self.keys[pygame.K_LEFT]:
                     self.new_x += -self.PLAYER_MAX_SPEED
                     self.player_facing = -1
                     self.player_movement_state_x = 'moving_left'
-                if self.keys[pygame.K_d]:
+                if self.keys[pygame.K_d] or self.keys[pygame.K_RIGHT]:
                     self.new_x += self.PLAYER_MAX_SPEED
                     self.player_facing = 1
                     self.player_movement_state_x = 'moving_right'
