@@ -1,3 +1,105 @@
 {
-    "python-envs.defaultEnvManager": "ms-python.python:system"
+    "python-envs.defaultEnvManager": "ms-python.python:system",
+    "better-comments.tags": [
+
+        {
+            // Example
+            // "tag": "!",
+            // "color": "#FF2D00",
+            // "strikethrough": false,
+            // "underline": false,
+            // "backgroundColor": "transparent",
+            // "bold": false,
+            // "italic": false
+        },
+        {
+            "tag": "note",
+            "color": "#2ECC71"
+        },
+        {
+            "tag": "!",
+            "color": "#FF2D00"
+        },
+        {
+            "tag": "?",
+            "color": "#3498DB"
+        },
+        {
+            "tag": "//",
+            "color": "#474747",
+            "strikethrough": true
+        },
+        {
+            "tag": "todo",
+            "color": "#FF8C00"
+        },
+        {
+            "tag": "*",
+            "color": "#98C379"
+        },
+
+        // --- Symbol-based tags ---
+        {
+            "tag": "!@",
+            "color": "#C678DD",
+            "bold": true
+        },
+        {
+            "tag": "!#",
+            "color": "#D19A66"
+        },
+        {
+            "tag": "!$",
+            "color": "#56B6C2"
+        },
+        {
+            "tag": "!%",
+            "color": "#E06C75",
+            "bold": true
+        },
+        {
+            "tag": "!^",
+            "color": "#61AFEF"
+        },
+        {
+            "tag": "!&",
+            "color": "#A29BFE",
+            "italic": true
+        },
+        {
+            "tag": "!*",
+            "color": "#C77DFF",
+            "underline": true
+        },
+
+        {
+            "tag": "@",
+            "color": "#BB6BD9",
+            "bold": true
+        },
+        {
+            "tag": "#",
+            "color": "#9B59B6"
+        },
+        {
+            "tag": "$",
+            "color": "#8E44AD"
+        },
+        {
+            "tag": "%",
+            "color": "#6C5CE7"
+        },
+        {
+            "tag": "^",
+            "color": "#B388FF"
+        },
+        {
+            "tag": "&",
+            "color": "#7E57C2"
+        },
+        {
+            "tag": "*",
+            "color": "#DDA0DD"
+        }
+    ]
 }

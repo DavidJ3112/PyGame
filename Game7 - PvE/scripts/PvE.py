@@ -11,14 +11,34 @@ class PvE:
     def __init__(self):
         pass
 
-    def Attack(self):
-        return True, "Attack"
+    def Attack(self, player, enemy):
+        print(f"{ANSI.RED} Attack {ANSI.RESET}")
+        return
 
-    def Guard(self):
-        return True, "Guard"
+    def Guard(self, player, enemy):
+        print(f"{ANSI.RED} Guard {ANSI.RESET}")
+        return
 
-    def Item(self):
-        return False, "Item"
+    def Flee(self, player, enemy):
+        print(f"{ANSI.RED} Flee {ANSI.RESET}")
+        return
+    
+    def Item(self, player, enemy):
+        print(f"{ANSI.RED} Inv {ANSI.RESET}")
+        return
 
-    def Flee(self):
-        return True, "Flee"
+    def Cast(self, player, enemy, spell_key, spell_data):
+        print(f"{ANSI.MAGENTA}Spell: {spell_key}{ANSI.NEW_LINE}Spell Data: {spell_data}{ANSI.RESET}")
+    
+    def enemy(self):
+        print("heheheha")
+
+class Attack_Cycle:
+    def boss(self):
+        print("boss")
+
+    def normal(self):
+        print("boss")
+    
+    def exp(self):
+        print("Level Up")

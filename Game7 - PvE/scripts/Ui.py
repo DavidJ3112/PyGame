@@ -6,6 +6,11 @@ class PvEUI:
 
         self.actions = ["Attack", "Magic", "Guard", "Item", "Flee"]
         self.buttons = []
+        self.spell_list = []
+
+        self.spell_page = 0
+        self.spells_per_page = 4
+        self.printed = False
 
         # Colors
         self.WHITE = (255, 255, 255)
@@ -27,12 +32,12 @@ class PvEUI:
         self.screen.blit(surf, (x, y))
 
     #note ---------------- MAIN DRAW ----------------
-    def draw(self, player, enemy):
+    def draw(self, game):
         self.screen.fill(self.DARK)
 
-        self._draw_enemy(enemy)
-        self._draw_player(player)
-        self._draw_actions()
+        self._draw_enemy(game.enemy)
+        self._draw_player(game.player_stats)
+        self._draw_actions(game, game.mode, game.spells)
 
         return self.buttons
 
@@ -84,23 +89,71 @@ class PvEUI:
         pygame.draw.rect(self.screen, self.WHITE, (410, 105, 180, 6), 1)
 
     #note ---------------- ACTIONS ----------------
-    def _draw_actions(self):
-        pygame.draw.rect(self.screen, self.BLACK, (10, 520, 620, 110))
-
+    def _draw_actions(self, game, mode, spells):
         self.buttons = []
 
         btn_w, btn_h = 110, 60
         spacing = 10
         start_x = 20
         y = 545
+        nav_w, nav_h = 70, 25
+        nav_y = 500
+        center_x = 10 + 620 // 2
 
-        for i, action in enumerate(self.actions):
-            x = start_x + i * (btn_w + spacing)
-            rect = pygame.Rect(x, y, btn_w, btn_h)
+        if mode == "Normal":
+            pygame.draw.rect(self.screen, self.BLACK, (10, 520, 620, 110))
+            for i, action in enumerate(self.actions):
+                x = start_x + i * (btn_w + spacing)
+                rect = pygame.Rect(x, y, btn_w, btn_h)
 
-            pygame.draw.rect(self.screen, self.GRAY, rect)
-            pygame.draw.rect(self.screen, self.WHITE, rect, 2)
+                pygame.draw.rect(self.screen, self.GRAY, rect)
+                pygame.draw.rect(self.screen, self.WHITE, rect, 2)
 
-            self.draw_text(action, x + 20, y + 18, self.FONT)
+                self.draw_text(action, x + 20, y + 18, self.FONT)
 
-            self.buttons.append((action, rect))
+                self.buttons.append((action, rect, "main","-1"))
+        
+        elif mode == "Spells":
+            pygame.draw.rect(self.screen, self.BLACK, (10, 520, 620, 110))
+            WIDTH_MULT = 1.29
+
+            prev_rect = pygame.Rect(center_x - 120, nav_y, nav_w, nav_h)
+            back_rect = pygame.Rect(center_x - 35, nav_y, nav_w, nav_h)
+            next_rect = pygame.Rect(center_x + 50, nav_y, nav_w, nav_h)
+
+            for label, rect in [
+                ("Prev", prev_rect),
+                ("Back", back_rect),
+                ("Next", next_rect)
+            ]:
+                pygame.draw.rect(self.screen, self.GRAY, rect)
+                pygame.draw.rect(self.screen, self.WHITE, rect, 1)
+                self.draw_text(label, rect.x + 10, rect.y + 3, self.FONT)
+                self.buttons.append((label, rect, "nav","-1"))
+
+            if not self.printed:
+                for _, spell in spells.items():
+                    self.spell_list.append(spell['name'])
+                if game.debug:
+                    print (self.spell_list)
+                self.printed = True
+            
+            start = self.spell_page *self.spells_per_page
+            end = start + self.spells_per_page
+
+            for i, spell in enumerate(self.spell_list[start:end]):
+                x = start_x + i * (btn_w * WIDTH_MULT + spacing)
+                rect = pygame.Rect(x, y, btn_w * WIDTH_MULT, btn_h)
+                
+                pygame.draw.rect(self.screen, self.GRAY, rect)
+                pygame.draw.rect(self.screen, self.WHITE, rect, 2)
+                
+                self.draw_text(spell, x + 20, y + 18, self.FONT)
+                
+                self.buttons.append((spell, rect, "magic",start + i))
+                
+
+        elif mode == "Inventory":
+            return
+
+        else: return
