@@ -1,3 +1,11 @@
+import sys, os
+
+current_dir = os.path.dirname(os.path.abspath(__file__))
+parent_dir = os.path.abspath(os.path.join(current_dir, ".."))
+sys.path.append(parent_dir)
+
+from general_scripts.ANSI import ANSI
+
 import pygame
 
 class PvEUI:
@@ -57,15 +65,15 @@ class PvEUI:
 
         ratio = enemy["hp"] / enemy["max_hp"]
 
-        pygame.draw.rect(self.screen, self.RED, (20, 90, 180 * ratio, 10))
-        pygame.draw.rect(self.screen, self.WHITE, (20, 90, 180, 10), 1)
+        pygame.draw.rect(self.screen, self.RED, (20, 90, 200 * ratio, 10))
+        pygame.draw.rect(self.screen, self.WHITE, (20, 90, 200, 10), 1)
 
     #note ---------------- PLAYER ----------------
     def _draw_player(self, player):
         pygame.draw.rect(self.screen, self.GRAY, (400, 10, 230, 120))
 
         self.draw_text(
-            f"Player Lv {player['lvl']}",
+            f"{player['name']} Lv {player['lvl']}",
             410, 20, self.BIG
         )
 
@@ -135,7 +143,7 @@ class PvEUI:
                 for _, spell in spells.items():
                     self.spell_list.append(spell['name'])
                 if game.debug:
-                    print (self.spell_list)
+                    print (f"{ANSI.YELLOW}{self.spell_list}{ANSI.RESET}")
                 self.printed = True
             
             start = self.spell_page *self.spells_per_page

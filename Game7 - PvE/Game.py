@@ -20,6 +20,8 @@ class Game:
         self.mode = "Normal"
         self.running = True
         self.debug = True
+        self.sep = f"{ANSI.NEW_LINE}{ANSI.BRIGHT_MAGENTA}{ANSI.SAPERATOR}{ANSI.RESET}"
+
 
         self.SCREEN_RATIOS = (640, 640)
         self.BGCOLOR = (25, 25, 25)
@@ -34,6 +36,7 @@ class Game:
         self.spells = Spell.all_spells()
 
         self.player_stats = {
+            "name": "Rose",
             "lvl": 5,
 
             #!^ Health & mana
@@ -64,7 +67,10 @@ class Game:
             "luck": 3
         }
         
-        self.enemy = Enemies.generate_enemy(self.player_stats["lvl"])
+        self.dificulty : float = 1.0
+        self.no_boss_sinds : int = 0
+
+        self.enemy = Enemies.generate_enemy(self, self.player_stats["lvl"])
 
     def loop(self):
         while self.running:
@@ -81,7 +87,7 @@ class Game:
                         self.running = False
 
                     if event.key == pygame.K_F1:
-                        self.enemy = Enemies.generate_enemy(self.player_stats["lvl"])
+                        self.enemy = Enemies.generate_enemy(self, self.player_stats["lvl"])
 
                     if event.key == pygame.K_F2:
                         self.mode = "Normal"
@@ -94,32 +100,29 @@ class Game:
 
 #note ──────────────────   Debug Text  ──────────────────────────────────────────────────────────
                             if self.debug:
-                                print(f"{ANSI.RED}{buttons}{ANSI.RESET}")
-
-                            print(f"{ANSI.BRIGHT_GREEN}     Action clicked: {name}{ANSI.RESET}")
-                            if self.debug:
-                                print(f"{ANSI.CYAN}     Action Clicked: {name}, rect: {rect}, Mode: {mode}, Current mode:{self.mode}{ANSI.RESET}")
-                            print(f"{ANSI.NEW_LINE}{ANSI.BRIGHT_MAGENTA}{ANSI.SAPERATOR}{ANSI.RESET}")
+                                print(self.sep)
+                                print(f"{ANSI.YELLOW}{buttons}{ANSI.RESET}")
+                                print(f"{ANSI.YELLOW}     Action Clicked: {name}, rect: {rect}, Mode: {mode}, Current mode:{self.mode}{ANSI.RESET}")
 
 #note ──────────────────    Main Detection  ─────────────────────────────────────────────────────
                             if mode == "main":
                                 if name == "Attack":
-                                    PvE.PvE.Attack(self, self.player_stats, self.enemy)
+                                    PvE.PvE.Attack(self)
                                 elif name == "Magic":
                                     self.mode = "Spells"
                                 elif name == "Guard":
-                                    PvE.PvE.Guard(self, self.player_stats, self.enemy)
+                                    PvE.PvE.Guard(self)
                                 elif name == "Item":
                                     print("Item")
                                     self.mode = "Inventory"
                                 elif name == "Flee":
-                                    PvE.PvE.Flee(self, self.player_stats, self.enemy)
+                                    PvE.PvE.Flee(self)
 
 #note ──────────────────    Magic Detection ─────────────────────────────────────────────────────
                             elif mode == "magic":
                                 cast = list(self.spells.items())
                                 spell_key, spell_data = cast[spell_index]
-                                PvE.PvE.Cast(self, self.player_stats, self.enemy, spell_key, spell_data)
+                                PvE.PvE.Cast(self, spell_key, spell_data)
                                 self.mode = "Normal"
 
 #note ──────────────────    Page Detection ──────────────────────────────────────────────────────

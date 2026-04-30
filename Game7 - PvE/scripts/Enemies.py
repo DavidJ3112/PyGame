@@ -311,25 +311,72 @@ def _scale_player_level(player_lvl: int) -> int:
         return player_lvl
     return SOFT_CAP_LEVEL + (player_lvl - SOFT_CAP_LEVEL) // LATE_GAME_DIVISOR
 
+def round_1(x):
+    return round(x, 1)
 
-def generate_enemy(player_lvl: int):
+def round_3(x):
+    return round(x, 3)
+
+def generate_enemy(self, player_lvl: int):
     scaled_player = _scale_player_level(player_lvl)
 
-    while True:
+    print(self.sep)
+
+    for _ in range(20):  #!^ prevent infinite loop
         enemy_key = random.choice(list(enemy_pool.keys()))
         base = enemy_pool[enemy_key]
+        print(enemy_key)
 
-        #!^ boss protection: prevent low level players from getting destroyed instantly
-        if base.get("boss", False) and player_lvl < 5:
-            continue
+        hp0 = base.get("base_hp", 100)
+        atk0 = base.get("attack", 0)
+        def0 = base.get("defense", 0)
+        spd0 = base.get("speed", 0)
+        mp0 = base.get("mp", 0)
+        crit0 = base.get("crit", 0)
+        eva0 = base.get("eva", 0)
+        exp0 = base.get("exp_drop", 0)
+        gold0 = base.get("gold_drop", 0)
+
+        #!^ boss protection
+        is_boss = base.get("boss", False)
+
+        if is_boss:
+            if player_lvl < 15:
+                continue
+            if self.no_boss_sinds < 10:
+                continue
+
+        if is_boss:
+            self.no_boss_sinds = 0
+        else:
+            self.no_boss_sinds += 1
+
 
         enemy_lvl = base["base_lvl"] + scaled_player
         lvl_variation = random.randint(-1, 2)
         lvl = max(1, enemy_lvl + lvl_variation)
 
-        hp = base["base_hp"] + (lvl * 8)
-        hp = round(hp / 5) * 5
+        #!^ --- Scaling ---
+        multiplier = self.dificulty
 
+        if base.get("boss", False):
+            multiplier = self.dificulty * 1.8
+
+        multiplier = multiplier + (lvl / 25)
+
+        hp = round_1(round((hp0 * multiplier) / 5) * 5)
+        attack = round_1(atk0 * multiplier)
+        defense = round_1(def0 * multiplier)
+        speed = round_1(spd0 * multiplier)
+
+        mp = round_1(mp0 * multiplier)
+        max_mp = mp
+
+        crit = round_3(crit0 * multiplier)
+        eva = round_3(eva0 * multiplier)
+
+        exp_drop = round_1(exp0 * multiplier)
+        gold_drop = round_1(gold0 * multiplier)
 
         return {
             "id": enemy_key,
@@ -337,12 +384,19 @@ def generate_enemy(player_lvl: int):
             "lvl": lvl,
             "hp": hp,
             "max_hp": hp,
-            "attack": base["attack"],
-            "defense": base["defense"],
-            "speed": base["speed"],
-            "exp_drop": base["exp_drop"],
+            "mp": mp,
+            "max_mp": max_mp,
+            "attack": attack,
+            "defense": defense,
+            "speed": speed,
+            "crit": crit,
+            "eva": eva,
+            "exp_drop": exp_drop,
+            "gold_drop": gold_drop,
             "rarity": base["rarity"],
-            "resistance": base["resistance"],
+            "resistance": base["resistance"].copy(),
             "attack_type": base["attack_type"],
             "boss": base.get("boss", False)
         }
+
+    raise ValueError("No valid enemy found")

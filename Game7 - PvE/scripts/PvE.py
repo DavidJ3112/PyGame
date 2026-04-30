@@ -11,34 +11,67 @@ class PvE:
     def __init__(self):
         pass
 
-    def Attack(self, player, enemy):
-        print(f"{ANSI.RED} Attack {ANSI.RESET}")
-        return
-
-    def Guard(self, player, enemy):
-        print(f"{ANSI.RED} Guard {ANSI.RESET}")
-        return
-
-    def Flee(self, player, enemy):
-        print(f"{ANSI.RED} Flee {ANSI.RESET}")
-        return
+    def Attack(self): PvE.Do_Action(self, "Attack")
+    def Guard(self): PvE.Do_Action(self, "Guard")
+    def Flee(self): PvE.Do_Action(self, "Flee")
+    def Item(self): PvE.Do_Action(self, "Item")
+    def Cast(self, spell_key, spell_data): PvE.Do_Action(self, "Spell", (spell_key, spell_data))
     
-    def Item(self, player, enemy):
-        print(f"{ANSI.RED} Inv {ANSI.RESET}")
-        return
 
-    def Cast(self, player, enemy, spell_key, spell_data):
-        print(f"{ANSI.MAGENTA}Spell: {spell_key}{ANSI.NEW_LINE}Spell Data: {spell_data}{ANSI.RESET}")
-    
-    def enemy(self):
-        print("heheheha")
+    def Do_Action(self, mode, spell_data = None):
+        Player_Attack_Data = PvE.Player(self, mode, spell_data)
+        Enemy_Attack_Data = PvE.Enemy(self)
+        PvE.Attack_Cycle(self, Player_Attack_Data, Enemy_Attack_Data)
 
-class Attack_Cycle:
-    def boss(self):
-        print("boss")
+    def Player(self, mode, spell_data):
+        if self.debug:
+            print(f"{ANSI.NEW_LINE}{ANSI.BRIGHT_MAGENTA}{ANSI.SAPERATOR}{ANSI.RESET}")
+            for key, value in self.player_stats.items():
+                print(f"{ANSI.YELLOW}{key}: {value}{ANSI.RESET}")
+            print(f"{ANSI.wrap(mode, ANSI.BOLD, ANSI.YELLOW)}")
 
-    def normal(self):
-        print("boss")
-    
-    def exp(self):
-        print("Level Up")
+            if spell_data:
+                print(f"{ANSI.NEW_LINE}{ANSI.BRIGHT_MAGENTA}{ANSI.SAPERATOR}{ANSI.RESET}")
+                print(f"{ANSI.wrap(str(spell_data), ANSI.BOLD, ANSI.YELLOW)}")
+        if mode == "Attack":
+            Player_Attack_Data = self.player_stats["atk"]
+
+        elif mode == "Guard":
+            Player_Attack_Data = self.player_stats["atk"]
+
+        elif mode == "Flee":
+            Player_Attack_Data = self.player_stats["atk"]
+
+        elif mode == "Items":
+            Player_Attack_Data = self.player_stats["atk"]
+
+        elif mode == "Spell":
+            Player_Attack_Data = self.player_stats["atk"]
+
+        return Player_Attack_Data
+
+    def Enemy(self):
+        if self.debug:
+            print(f"{ANSI.NEW_LINE}{ANSI.BRIGHT_MAGENTA}{ANSI.SAPERATOR}{ANSI.RESET}")
+            for key, value in self.enemy.items():
+                print(f"{ANSI.YELLOW}{key}: {value}{ANSI.RESET}")
+            ## id
+            ## name
+            ## lvl
+            ## hp
+            ## max_hp
+            ## attack
+            ## defense
+            ## speed
+            ## exp_drop
+            ## rarity
+            ## resistance
+            ## attack_type
+            ## boss
+            print(f"{ANSI.NEW_LINE}{ANSI.BRIGHT_MAGENTA}{ANSI.SAPERATOR}{ANSI.RESET}")
+        Enemy_Attack_Data = self.enemy["attack"]
+        return Enemy_Attack_Data
+
+
+    def Attack_Cycle(self, Player_Attack_Data, Enemy_Attack_Data):
+        print(f"{ANSI.CYAN}{ANSI.BOLD} Player: {Player_Attack_Data} {ANSI.NEW_LINE} Enemy:{Enemy_Attack_Data}{ANSI.RESET}")
