@@ -12,7 +12,7 @@ class PvEUI:
         self.spells_per_page = 4
         self.printed = False
 
-        # Colors
+        #!^ Colors
         self.WHITE = (255, 255, 255)
         self.BLACK = (0, 0, 0)
         self.GRAY = (40, 40, 40)
@@ -20,7 +20,7 @@ class PvEUI:
         self.RED = (200, 60, 60)
         self.BLUE = (60, 120, 220)
 
-        # Fonts (correct + safe)
+        #!^ Fonts (correct + safe)
         self.FONT = pygame.font.SysFont("arial", 18)
         self.BIG = pygame.font.SysFont("arial", 24)
 

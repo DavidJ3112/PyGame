@@ -1,44 +1,21 @@
 {
     "python-envs.defaultEnvManager": "ms-python.python:system",
     "better-comments.tags": [
-
-        {
-            // Example
-            // "tag": "!",
-            // "color": "#FF2D00",
-            // "strikethrough": false,
-            // "underline": false,
-            // "backgroundColor": "transparent",
-            // "bold": false,
-            // "italic": false
-        },
         {
             "tag": "note",
-            "color": "#2ECC71"
+            "color": "#2ECC71",
+            "strikethrough": false,
+            "underline": false,
+            "backgroundColor": "transparent",
+            "bold": false,
+            "italic": false
         },
         {
-            "tag": "!",
-            "color": "#FF2D00"
+            "tag": "!!",
+            "color": "#FF0000",
+            "bold": true,
+            "backgroundColor":"#FF000040"
         },
-        {
-            "tag": "?",
-            "color": "#3498DB"
-        },
-        {
-            "tag": "//",
-            "color": "#474747",
-            "strikethrough": true
-        },
-        {
-            "tag": "todo",
-            "color": "#FF8C00"
-        },
-        {
-            "tag": "*",
-            "color": "#98C379"
-        },
-
-        // --- Symbol-based tags ---
         {
             "tag": "!@",
             "color": "#C678DD",
@@ -71,15 +48,10 @@
             "color": "#C77DFF",
             "underline": true
         },
-
         {
             "tag": "@",
             "color": "#BB6BD9",
             "bold": true
-        },
-        {
-            "tag": "#",
-            "color": "#9B59B6"
         },
         {
             "tag": "$",
@@ -100,6 +72,10 @@
         {
             "tag": "*",
             "color": "#DDA0DD"
+        },
+        {
+            "tag": "#",
+            "color": "#032"
         }
     ]
 }

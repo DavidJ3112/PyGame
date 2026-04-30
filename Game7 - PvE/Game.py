@@ -36,30 +36,30 @@ class Game:
         self.player_stats = {
             "lvl": 5,
 
-            # Health & mana
+            #!^ Health & mana
             "hp": 80,
             "max_hp": 100,
             "mp": 30,
             "max_mp": 50,
 
-            # Core attributes
-            "str": 12,   # Strength (physical damage)
-            "int": 10,   # Intelligence (magic power)
-            "dex": 11,   # Dexterity (speed / accuracy)
-            "def": 9,    # Defense (damage reduction)
-            "res": 8,    # Resistance (magic defense)
+            #!^ Core attributes
+            "str": 12,   ## Strength (physical damage)
+            "int": 10,   ## Intelligence (magic power)
+            "dex": 11,   ## Dexterity (speed / accuracy)
+            "def": 9,    ## Defense (damage reduction)
+            "res": 8,    ## Resistance (magic defense)
 
-            # Secondary stats
-            "atk": 15,   # Attack power
-            "crit": 5,   # Critical chance (%)
-            "spd": 10,   # Turn speed / initiative
-            "eva": 7,    # Dodge / Evasion chance
+            #!^ Secondary stats
+            "atk": 15,   ## Attack power
+            "crit": 5,   ## Critical chance (%)
+            "spd": 10,   ## Turn speed / initiative
+            "eva": 7,    ## Dodge / Evasion chance
 
-            # Progression
+            #!^ Progression
             "xp": 120,
             "xp_to_next": 200,
 
-            # Misc
+            #!^ Misc
             "gold": 50,
             "luck": 3
         }
@@ -91,7 +91,7 @@ class Game:
                     mx, my = pygame.mouse.get_pos()
                     for name, rect, mode, spell_index in buttons:
                         if rect.collidepoint(mx, my):
-                            
+
 #note ──────────────────   Debug Text  ──────────────────────────────────────────────────────────
                             if self.debug:
                                 print(f"{ANSI.RED}{buttons}{ANSI.RESET}")

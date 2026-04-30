@@ -1,7 +1,3 @@
-# enemies.py
-# Enemy catalog + generation logic
-# Includes scaling limiter and boss protection system
-
 import random
 
 SOFT_CAP_LEVEL = 60
@@ -323,7 +319,7 @@ def generate_enemy(player_lvl: int):
         enemy_key = random.choice(list(enemy_pool.keys()))
         base = enemy_pool[enemy_key]
 
-        # boss protection: prevent low level players from getting destroyed instantly
+        #!^ boss protection: prevent low level players from getting destroyed instantly
         if base.get("boss", False) and player_lvl < 5:
             continue
 
