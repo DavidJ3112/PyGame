@@ -35,7 +35,7 @@ class Game:
 
         self.spells = Spell.all_spells()
 
-        self.player_stats = {
+        self.player_stats_base = {
             "name": "Rose",
             "lvl": 5,
 
@@ -60,17 +60,23 @@ class Game:
 
             #!^ Progression
             "xp": 120,
-            "xp_to_next": 200,
+            "xp_req": 200,
 
             #!^ Misc
             "gold": 50,
             "luck": 3
         }
+        self.player_stats = self.player_stats_base
         
         self.dificulty : float = 1.0
         self.no_boss_sinds : int = 0
 
+        self.Enemy_Generation_Logic()
+
+    def Enemy_Generation_Logic(self):
+        self.player_stats = self.player_stats_base
         self.enemy = Enemies.generate_enemy(self, self.player_stats["lvl"])
+
 
     def loop(self):
         while self.running:
@@ -87,7 +93,7 @@ class Game:
                         self.running = False
 
                     if event.key == pygame.K_F1:
-                        self.enemy = Enemies.generate_enemy(self, self.player_stats["lvl"])
+                        self.Enemy_Generation_Logic()
 
                     if event.key == pygame.K_F2:
                         self.mode = "Normal"

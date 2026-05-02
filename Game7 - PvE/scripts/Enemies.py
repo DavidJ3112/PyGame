@@ -1,3 +1,12 @@
+import sys, os
+
+current_dir = os.path.dirname(os.path.abspath(__file__))
+parent_dir = os.path.abspath(os.path.join(current_dir, ".."))
+
+sys.path.append(parent_dir)
+
+from general_scripts.ANSI import ANSI
+
 import random
 
 SOFT_CAP_LEVEL = 60
@@ -311,11 +320,11 @@ def _scale_player_level(player_lvl: int) -> int:
         return player_lvl
     return SOFT_CAP_LEVEL + (player_lvl - SOFT_CAP_LEVEL) // LATE_GAME_DIVISOR
 
-def round_1(x):
-    return round(x, 1)
+def round_0(x):
+    return int(round(x, 0))
 
 def round_3(x):
-    return round(x, 3)
+    return str(round(x, 3))
 
 def generate_enemy(self, player_lvl: int):
     scaled_player = _scale_player_level(player_lvl)
@@ -325,7 +334,8 @@ def generate_enemy(self, player_lvl: int):
     for _ in range(20):  #!^ prevent infinite loop
         enemy_key = random.choice(list(enemy_pool.keys()))
         base = enemy_pool[enemy_key]
-        print(enemy_key)
+        print(f"{ANSI.rgb(255, 128, 0)}{ANSI.BOLD} Trying Enemy: {enemy_key}{ANSI.RESET}{ANSI.CURSOR_SAVE}")
+
 
         hp0 = base.get("base_hp", 100)
         atk0 = base.get("attack", 0)
@@ -342,8 +352,10 @@ def generate_enemy(self, player_lvl: int):
 
         if is_boss:
             if player_lvl < 15:
+                print(f"{ANSI.CURSOR_RESTORE}{ANSI.wrap("   Faild, (Level Req)", ANSI.rgb(255, 0, 0), ANSI.BOLD)}")
                 continue
             if self.no_boss_sinds < 10:
+                print(f"{ANSI.CURSOR_RESTORE}{ANSI.wrap("   Faild, (Boss Cooldown)", ANSI.rgb(255, 0, 0), ANSI.BOLD)}")
                 continue
 
         if is_boss:
@@ -364,19 +376,21 @@ def generate_enemy(self, player_lvl: int):
 
         multiplier = multiplier + (lvl / 25)
 
-        hp = round_1(round((hp0 * multiplier) / 5) * 5)
-        attack = round_1(atk0 * multiplier)
-        defense = round_1(def0 * multiplier)
-        speed = round_1(spd0 * multiplier)
+        hp = round_0(round((hp0 * multiplier) / 5) * 5)
+        attack = round_0(atk0 * multiplier)
+        defense = round_0(def0 * multiplier)
+        speed = round_0(spd0 * multiplier)
 
-        mp = round_1(mp0 * multiplier)
+        mp = round_0(mp0 * multiplier)
         max_mp = mp
 
         crit = round_3(crit0 * multiplier)
         eva = round_3(eva0 * multiplier)
 
-        exp_drop = round_1(exp0 * multiplier)
-        gold_drop = round_1(gold0 * multiplier)
+        exp_drop = round_0(exp0 * multiplier)
+        gold_drop = round_0(gold0 * multiplier)
+
+        print(f"{ANSI.CURSOR_RESTORE}{ANSI.wrap('   Success', ANSI.rgb(0, 255, 0), ANSI.BOLD)}")
 
         return {
             "id": enemy_key,
