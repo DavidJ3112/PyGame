@@ -348,4 +348,7 @@ class PvE:
                 
                 self.shop = True
                 self.Enemy_Generation_Logic()
-            
+
+#Todo boss cooldow
+#Todo player stat improvments
+#Todo Shop
