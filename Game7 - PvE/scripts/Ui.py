@@ -32,22 +32,173 @@ class PvEUI:
         self.FONT = pygame.font.SysFont("arial", 18)
         self.BIG = pygame.font.SysFont("arial", 24)
 
+        self.spell_bg = {
+            "": {
+                "text": "#1F2937",
+                "bg": "#E5E7EB"
+            },
+            "arcane": {
+                "text": "#E9D5FF",
+                "bg": "#0021A8"
+            },
+            "blood": {
+                "text": "#FEE2E2",
+                "bg": "#991B1B"
+            },
+            "dark": {
+                "text": "#D1D5DB",
+                "bg": "#111827"
+            },
+            "earth": {
+                "text": "#ECFDF5",
+                "bg": "#365314"
+            },
+            "electric": {
+                "text": "#1F2937",
+                "bg": "#FACC15"
+            },
+            "fire": {
+                "text": "#FFF7ED",
+                "bg": "#C2410C"
+            },
+            "holy": {
+                "text": "#78350F",
+                "bg": "#FEF9C3"
+            },
+            "ice": {
+                "text": "#0C4A6E",
+                "bg": "#BAE6FD"
+            },
+            "physical": {
+                "text": "#111827",
+                "bg": "#9CA3AF"
+            },
+            "poison": {
+                "text": "#F3E8FF",
+                "bg": "#005100"
+            },
+            "wind": {
+                "text": "#064E3B",
+                "bg": "#A7F3D0"
+            }
+        }
+
+        self.categories = {
+            "Rage": {
+                "border": "#DC2626"
+            },
+            "Spell": {
+                "border": "#7C3AED"
+            },
+            "Technique": {
+                "border": "#2563EB"
+            }
+        }
+
     #note ---------------- TEXT HELPER ----------------
-    def draw_text(self, text, x, y, font, color=None):
+    def draw_text(self, text, x, y, font, color=None, clip_rect=None):
         if color is None:
             color = self.WHITE
+
         surf = font.render(text, True, color)
+
+        if clip_rect:
+            old_clip = self.screen.get_clip()
+            self.screen.set_clip(clip_rect)
+
         self.screen.blit(surf, (x, y))
 
+        if clip_rect:
+            self.screen.set_clip(old_clip)
+
+    def fit_text_ellipsis(self, text, font, max_width):
+        if font.size(text)[0] <= max_width:
+            return text
+
+        ellipsis = "..."
+        while len(text) > 0:
+            text = text[:-1]
+            if font.size(text + ellipsis)[0] <= max_width:
+                return text + ellipsis
+
+        return ellipsis
+
     #note ---------------- MAIN DRAW ----------------
-    def draw(self, game):
-        self.screen.fill(self.DARK)
+    def draw(self, game, shop = False):
+        
+        if shop:
+            self.screen.fill(self.DARK)
+            
+            self._draw_shop(game.player_stats)
+            
+            return self.buttons
+        else:
+            self.screen.fill(self.DARK)
 
-        self._draw_enemy(game.enemy)
-        self._draw_player(game.player_stats)
-        self._draw_actions(game, game.mode, game.spells)
+            self._draw_enemy(game.enemy)
+            self._draw_player(game.player_stats)
+            self._draw_actions(game, game.mode, game.spells_damage)
 
-        return self.buttons
+            return self.buttons
+
+#!^ Shop:
+    def _draw_shop(self, player):
+        self.buttons = []
+
+        # background bar (same style as actions)
+        pygame.draw.rect(self.screen, self.BLACK, (10, 520, 620, 110))
+
+        # shop title
+        self.draw_text("SHOP", 20, 525, self.BIG)
+
+        btn_w, btn_h = 180, 60
+        spacing = 15
+        start_x = 20
+        y = 555
+
+        # example shop items (replace with your real shop data)
+        shop_items = [
+            {"name": "Sword", "price": 100},
+            {"name": "Shield", "price": 75},
+            {"name": "Potion", "price": 25},
+        ]
+
+        # Leave shop button
+        leave_rect = pygame.Rect(500, 20, 120, 60)
+
+        pygame.draw.rect(self.screen, self.RED, leave_rect)
+        pygame.draw.rect(self.screen, self.WHITE, leave_rect, 2)
+
+        self.draw_text("LEAVE", leave_rect.x + 25, leave_rect.y + 18, self.FONT)
+
+        self.buttons.append(("leave_shop", leave_rect, "shop", -1))
+
+        for i, item in enumerate(shop_items):
+            x = start_x + i * (btn_w + spacing)
+            rect = pygame.Rect(x, y, btn_w, btn_h)
+
+            # affordability check (because players are broke 90% of the time)
+            affordable = player["gold"] >= item["price"]
+
+            bg = self.GRAY if affordable else (60, 60, 60)
+            border = self.BLUE if affordable else self.RED
+
+            pygame.draw.rect(self.screen, bg, rect)
+            pygame.draw.rect(self.screen, border, rect, 2)
+
+            name_text = self.fit_text_ellipsis(item["name"], self.FONT, rect.width - 10)
+            self.draw_text(name_text, x + 10, y + 10, self.FONT)
+
+            self.draw_text(
+                f"{item['price']}g",
+                x + 10,
+                y + 32,
+                self.FONT,
+                self.YELLOW if hasattr(self, "YELLOW") else self.WHITE
+            )
+
+            self.buttons.append((item["name"], rect, "shop", i))
+        
 
     #note ---------------- ENEMY ----------------
     def _draw_enemy(self, enemy):
@@ -139,9 +290,11 @@ class PvEUI:
                 self.draw_text(label, rect.x + 10, rect.y + 3, self.FONT)
                 self.buttons.append((label, rect, "nav","-1"))
 
+
             if not self.printed:
                 for _, spell in spells.items():
-                    self.spell_list.append(spell['name'])
+                    self.spell_list.append((spell['name'],spell['type'],spell['damage_type']))
+                    
                 if game.debug:
                     print (f"{ANSI.YELLOW}{self.spell_list}{ANSI.RESET}")
                 self.printed = True
@@ -149,16 +302,27 @@ class PvEUI:
             start = self.spell_page *self.spells_per_page
             end = start + self.spells_per_page
 
-            for i, spell in enumerate(self.spell_list[start:end]):
+            for i, spell_data in enumerate(self.spell_list[start:end]):
+                spell, type, damage_type = spell_data
+                
+                BORDER = self.categories[type]["border"]
+                TILE = self.spell_bg[damage_type]["bg"]
+                TEXT_COLOR = self.spell_bg[damage_type]["text"]
+                
                 x = start_x + i * (btn_w * WIDTH_MULT + spacing)
                 rect = pygame.Rect(x, y, btn_w * WIDTH_MULT, btn_h)
+
+                pygame.draw.rect(self.screen, TILE, rect)
+                pygame.draw.rect(self.screen, BORDER, rect, 2)
                 
-                pygame.draw.rect(self.screen, self.GRAY, rect)
-                pygame.draw.rect(self.screen, self.WHITE, rect, 2)
+                max_text_width = rect.width - 20  # padding inside tile
+
+                display_text = self.fit_text_ellipsis(spell, self.FONT, max_text_width)
                 
-                self.draw_text(spell, x + 20, y + 18, self.FONT)
+                self.draw_text(display_text, x + 10, y + 18, self.FONT, TEXT_COLOR, clip_rect=rect)
                 
                 self.buttons.append((spell, rect, "magic",start + i))
+                
                 
 
         elif mode == "Inventory":

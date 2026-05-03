@@ -7,21 +7,29 @@ sys.path.append(parent_dir)
 from general_scripts.ANSI import ANSI
 import scripts.PvE as PvE
 import scripts.Ui as pve_ui
-import scripts.spells as Spell
+from general_scripts.RPG.Spells import all_spells
 import scripts.Enemies as Enemies
 import pygame
+import socket
 
 class Game:
     def __init__(self):
         pygame.init()
         pygame.font.init()
 
+        self.HOSTNAME = socket.gethostname()
+
         self.pve = PvE.PvE()
         self.mode = "Normal"
+        self.shop = False
         self.running = True
+        self.log = True
         self.debug = True
         self.sep = f"{ANSI.NEW_LINE}{ANSI.BRIGHT_MAGENTA}{ANSI.SAPERATOR}{ANSI.RESET}"
-
+        
+        self.god_p = True
+        self.god_e = True
+        self.inf_dmg = True
 
         self.SCREEN_RATIOS = (640, 640)
         self.BGCOLOR = (25, 25, 25)
@@ -33,15 +41,17 @@ class Game:
 
         self.ui = pve_ui.PvEUI(self.SCREEN)
 
-        self.spells = Spell.all_spells()
+        self.spells_damage = all_spells(False, False)
+        self.spells_buffs = all_spells(True, False)
+        self.spells_healing = all_spells(False, True)
 
         self.player_stats_base = {
             "name": "Rose",
             "lvl": 5,
 
             #!^ Health & mana
-            "hp": 80,
-            "max_hp": 100,
+            "hp": 250,
+            "max_hp": 250,
             "mp": 30,
             "max_mp": 50,
 
@@ -80,9 +90,11 @@ class Game:
 
     def loop(self):
         while self.running:
+            if self.debug: self.log = False
+
             self.Clock.tick(self.FPS)
 
-            buttons = self.ui.draw(self)
+            buttons = self.ui.draw(self, self.shop)
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -93,10 +105,33 @@ class Game:
                         self.running = False
 
                     if event.key == pygame.K_F1:
-                        self.Enemy_Generation_Logic()
-
+                        if self.debug: self.Enemy_Generation_Logic()
+                    
                     if event.key == pygame.K_F2:
-                        self.mode = "Normal"
+                        if self.debug: 
+                            self.god_p = not self.god_p
+                            print(ANSI.wrap("God Mode of player: " + str(self.god_p), ANSI.GREEN))
+                        
+                    if event.key == pygame.K_F3:
+                        if self.debug: 
+                            self.god_e = not self.god_e
+                            print(ANSI.wrap("God Mode of enemy: " + str(self.god_e), ANSI.GREEN))
+                        
+                    if event.key == pygame.K_F4:
+                        if self.debug: 
+                            self.inf_dmg = not self.inf_dmg
+                            print(ANSI.wrap("Infinity Dmg: " + str(self.inf_dmg), ANSI.GREEN))
+                        
+                    if event.key == pygame.K_F5:
+                        if self.HOSTNAME == "Desktop-David" or self.HOSTNAME == "Loptop-David":
+                            self.debug = not self.debug
+                            self.log = not self.log
+                            print(ANSI.wrap("Debugging: " + str(self.debug), ANSI.GREEN))
+                            print(ANSI.wrap("loggin: " + str(self.log), ANSI.GREEN))
+
+                    if event.key == pygame.K_F6:
+                        self.log = not self.log
+                        print(ANSI.wrap("loggin: " + str(self.log), ANSI.GREEN))
                     
 
                 if event.type == pygame.MOUSEBUTTONDOWN:
@@ -104,13 +139,12 @@ class Game:
                     for name, rect, mode, spell_index in buttons:
                         if rect.collidepoint(mx, my):
 
-#note ──────────────────   Debug Text  ──────────────────────────────────────────────────────────
+#!^ ──────────────────   Debug Text  ──────────────────────────────────────────────────────────
                             if self.debug:
                                 print(self.sep)
-                                print(f"{ANSI.YELLOW}{buttons}{ANSI.RESET}")
                                 print(f"{ANSI.YELLOW}     Action Clicked: {name}, rect: {rect}, Mode: {mode}, Current mode:{self.mode}{ANSI.RESET}")
 
-#note ──────────────────    Main Detection  ─────────────────────────────────────────────────────
+#!^ ──────────────────    Main Detection  ─────────────────────────────────────────────────────
                             if mode == "main":
                                 if name == "Attack":
                                     PvE.PvE.Attack(self)
@@ -124,15 +158,22 @@ class Game:
                                 elif name == "Flee":
                                     PvE.PvE.Flee(self)
 
-#note ──────────────────    Magic Detection ─────────────────────────────────────────────────────
+#!^ ──────────────────    Spell Detection ─────────────────────────────────────────────────────
                             elif mode == "magic":
-                                cast = list(self.spells.items())
+                                cast = list(self.spells_damage.items())
                                 spell_key, spell_data = cast[spell_index]
-                                PvE.PvE.Cast(self, spell_key, spell_data)
+                                
+                                print(f"{ANSI.rgb(255,128,0)}{ANSI.BOLD} The Individual know as {self.player_stats_base["name"]} is atempting to cast: {spell_data["name"]}{ANSI.CURSOR_SAVE}{ANSI.RESET}")
+
+                                if spell_data["mp_cost"] <= self.player_stats_base["mp"]:
+                                    print(f"{ANSI.CURSOR_RESTORE}{ANSI.BRIGHT_GREEN}{ANSI.BOLD} Success {ANSI.RESET}")
+                                    PvE.PvE.Cast(self, spell_key, spell_data)
+                                else: print(f"{ANSI.CURSOR_RESTORE}{ANSI.RED}{ANSI.BOLD} Failed: Mana Def {ANSI.RESET}")
+
                                 self.mode = "Normal"
 
-#note ──────────────────    Page Detection ──────────────────────────────────────────────────────
-                            else:
+#!^ ──────────────────    Page Detection ──────────────────────────────────────────────────────
+                            elif mode == "nav":
                                 if name == "Next":
                                     max_page = max(0, (len(self.ui.spell_list) - 1) // self.ui.spells_per_page)
                                     self.ui.spell_page = min(max_page, self.ui.spell_page + 1)
@@ -144,6 +185,11 @@ class Game:
                                     self.mode = "Normal"
                                     break
 
+                            elif mode == "shop":
+                                if name == "leave_shop":
+                                    self.shop = False
+                            
+                            
             pygame.display.flip()
 
         pygame.quit()

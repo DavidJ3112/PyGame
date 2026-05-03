@@ -11,6 +11,12 @@
             "italic": false
         },
         {
+            "tag": "!#",
+            "color": "#00ffff",
+            "bold": true,
+            "backgroundColor":"#00ffff40"
+        },
+        {
             "tag": "!!",
             "color": "#FF0000",
             "bold": true,
@@ -22,7 +28,7 @@
             "bold": true
         },
         {
-            "tag": "!#",
+            "tag": "!>",
             "color": "#D19A66"
         },
         {
