@@ -29,7 +29,8 @@ def round_3(x):
 def generate_enemy(self, player_lvl: int):
     scaled_player = _scale_player_level(player_lvl)
 
-    print(self.sep)
+    if self.debug or self.log:
+        print(self.sep)
 
     for _ in range(20):  #!^ prevent infinite loop
         enemy_key = random.choice(list(enemy_pool.keys()))
@@ -99,7 +100,8 @@ def generate_enemy(self, player_lvl: int):
         exp_drop = round_0(exp0 * multiplier)
         gold_drop = round_0(gold0 * multiplier)
 
-        print(f"{ANSI.CURSOR_RESTORE}{ANSI.wrap('   Success', ANSI.rgb(0, 255, 0), ANSI.BOLD)}")
+        if self.debug or self.log:
+            print(f"{ANSI.CURSOR_RESTORE}{ANSI.wrap('   Success', ANSI.rgb(0, 255, 0), ANSI.BOLD)}")
 
         return {
             "id": enemy_key,

@@ -24,14 +24,14 @@ class Game:
         self.mode = "Normal"
         self.shop = False
         self.running = True
-        self.log = True
-        self.debug = True
+        self.log = False
+        self.debug = False
         self.level_up = True
         self.sep = f"{ANSI.NEW_LINE}{ANSI.BRIGHT_MAGENTA}{ANSI.SAPERATOR}{ANSI.RESET}"
 
-        self.god_p = True
-        self.god_e = True
-        self.inf_dmg = True
+        self.god_p = False
+        self.god_e = False
+        self.inf_dmg = False
 
         self.SCREEN_RATIOS = (640, 640)
         self.BGCOLOR = (25, 25, 25)
