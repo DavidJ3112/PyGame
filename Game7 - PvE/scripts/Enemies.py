@@ -34,9 +34,11 @@ def generate_enemy(self, player_lvl: int):
     for _ in range(20):  #!^ prevent infinite loop
         enemy_key = random.choice(list(enemy_pool.keys()))
         base = enemy_pool[enemy_key]
+        #!^ boss protection
+        is_boss = base.get("boss", False)
 
         if self.debug or self.log:
-            print(f"{ANSI.rgb(255, 128, 0)}{ANSI.BOLD} Trying Enemy: {enemy_key}{ANSI.RESET}{ANSI.CURSOR_SAVE}")
+            print(f"{ANSI.rgb(255, 128, 0)}{ANSI.BOLD} Trying Enemy: {ANSI.rgb(0, 255, 255)}{enemy_key}{ANSI.rgb(255, 128, 0)} Boss: {ANSI.rgb(0, 255, 0) if is_boss else ANSI.rgb(255, 0, 0)}{is_boss}{ANSI.RESET}{ANSI.CURSOR_SAVE}")
 
 
         hp0 = base.get("base_hp", 100)
@@ -49,14 +51,17 @@ def generate_enemy(self, player_lvl: int):
         exp0 = base.get("exp_drop", 0)
         gold0 = base.get("gold_drop", 0)
 
-        #!^ boss protection
-        is_boss = base.get("boss", False)
-
         if is_boss:
             if player_lvl < 15:
                 if self.debug or self.log:
                     print(f"{ANSI.CURSOR_RESTORE}{ANSI.wrap("   Faild, (Level Req)", ANSI.rgb(255, 0, 0), ANSI.BOLD)}")
                 continue
+
+            if random.randint(1, 100) < 30:
+                if self.debug or self.log:
+                    print(f"{ANSI.CURSOR_RESTORE}{ANSI.wrap("   Faild, (Chance)", ANSI.rgb(255, 0, 0), ANSI.BOLD)}")
+                continue
+
             if self.no_boss_sinds < 10:
                 if self.debug or self.log:
                     print(f"{ANSI.CURSOR_RESTORE}{ANSI.wrap("   Faild, (Boss Cooldown)", ANSI.rgb(255, 0, 0), ANSI.BOLD)}")
@@ -78,7 +83,7 @@ def generate_enemy(self, player_lvl: int):
         if base.get("boss", False):
             multiplier = self.dificulty * 1.8
 
-        multiplier = multiplier + (lvl / 25)
+        multiplier = multiplier + lvl / 5
 
         hp = round_0(round((hp0 * multiplier) / 5) * 5)
         attack = round_0(atk0 * multiplier)

@@ -27,6 +27,7 @@ class PvEUI:
         self.DARK = (25, 25, 25)
         self.RED = (200, 60, 60)
         self.BLUE = (60, 120, 220)
+        self.YELLOW = (255, 234, 0)
 
         #!^ Fonts (correct + safe)
         self.FONT = pygame.font.SysFont("arial", 18)
