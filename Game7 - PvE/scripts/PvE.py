@@ -5,9 +5,9 @@ parent_dir = os.path.abspath(os.path.join(current_dir, ".."))
 
 sys.path.append(parent_dir)
 
+from general_scripts.ANSI import ANSI
 import random
 
-from general_scripts.ANSI import ANSI
 
 
 class PvE:

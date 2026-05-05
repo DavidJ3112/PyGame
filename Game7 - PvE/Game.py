@@ -4,11 +4,11 @@ current_dir = os.path.dirname(os.path.abspath(__file__))
 parent_dir = os.path.abspath(os.path.join(current_dir, ".."))
 sys.path.append(parent_dir)
 
-from general_scripts.ANSI import ANSI
-import scripts.PvE as PvE
-import scripts.Ui as pve_ui
 from general_scripts.RPG.Spells import all_spells
+from general_scripts.ANSI import ANSI
 import scripts.Enemies as Enemies
+import scripts.Ui as pve_ui
+import scripts.PvE as PvE
 import pygame
 import socket
 import copy
