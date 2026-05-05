@@ -24,3 +24,5 @@
 [2026-05-05 23:48:43] INFO: gid = 1  data = {'type': 'player_move', 'GID': 1, 'symbol': 'x', 'click_col': 0, 'click_row': 0, 'game_id': 'DR_TicTacToe', 'version': '2.0'}
 [2026-05-05 23:48:43] SUCCESS: Move accepted: x at (0, 0)
 [2026-05-05 23:48:43] INFO: x wins the game!
+[2026-05-05 23:49:30] WARN: Player GID 1 disconnected.
+[2026-05-05 23:49:32] WARN: Player GID 2 disconnected.
