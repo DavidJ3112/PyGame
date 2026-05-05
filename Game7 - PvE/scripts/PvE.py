@@ -264,15 +264,15 @@ class PvE:
 
             if E_cast_data:
                 if element == E_spell_data["damage_type"]:
-                    print(ANSI.wrap("Enemy: " + str(E_spell_damage), ANSI.BOLD, ANSI.BLUE))
+                    if self.game.debug: print(ANSI.wrap("Enemy: " + str(E_spell_damage), ANSI.BOLD, ANSI.BLUE))
                     E_spell_damage = round(E_spell_damage * (1 + value))
-                    print(ANSI.wrap("Enemy: " + str(E_spell_damage), ANSI.BOLD, ANSI.RED))
+                    if self.game.debug: print(ANSI.wrap("Enemy: " + str(E_spell_damage), ANSI.BOLD, ANSI.RED))
 
             if P_cast_data:
                 if element == P_spell_data["damage_type"]:
-                    print(ANSI.wrap("Player: " + str(P_spell_damage), ANSI.BOLD, ANSI.BLUE))
+                    if self.game.debug: print(ANSI.wrap("Player: " + str(P_spell_damage), ANSI.BOLD, ANSI.BLUE))
                     P_spell_damage = round(P_spell_damage * (1 - value))
-                    print(ANSI.wrap("Player: " + str(P_spell_damage), ANSI.BOLD, ANSI.RED))
+                    if self.game.debug: print(ANSI.wrap("Player: " + str(P_spell_damage), ANSI.BOLD, ANSI.RED))
 
         #!^ Player AtK
         if P_spell_damage > 0:

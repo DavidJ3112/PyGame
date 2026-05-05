@@ -137,7 +137,7 @@ class PvEUI:
             self.screen.fill(self.DARK)
 
             self._draw_enemy(game.enemy)
-            self._draw_player(game.player_stats)
+            self._draw_player(game.player_stats_base)
             self._draw_actions(game, game.mode, game.spells_damage)
 
             return self.buttons
@@ -146,10 +146,10 @@ class PvEUI:
     def _draw_shop(self, player):
         self.buttons = []
 
-        # background bar (same style as actions)
+        #!^ background bar (same style as actions)
         pygame.draw.rect(self.screen, self.BLACK, (10, 520, 620, 110))
 
-        # shop title
+        #!^ shop title
         self.draw_text("SHOP", 20, 525, self.BIG)
 
         btn_w, btn_h = 180, 60
@@ -157,14 +157,13 @@ class PvEUI:
         start_x = 20
         y = 555
 
-        # example shop items (replace with your real shop data)
         shop_items = [
             {"name": "Sword", "price": 100},
             {"name": "Shield", "price": 75},
             {"name": "Potion", "price": 25},
         ]
 
-        # Leave shop button
+        #!^ Leave shop button
         leave_rect = pygame.Rect(500, 20, 120, 60)
 
         pygame.draw.rect(self.screen, self.RED, leave_rect)
@@ -178,7 +177,6 @@ class PvEUI:
             x = start_x + i * (btn_w + spacing)
             rect = pygame.Rect(x, y, btn_w, btn_h)
 
-            # affordability check (because players are broke 90% of the time)
             affordable = player["gold"] >= item["price"]
 
             bg = self.GRAY if affordable else (60, 60, 60)

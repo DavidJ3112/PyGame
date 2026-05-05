@@ -52,10 +52,10 @@ class Game:
             "lvl": 1,
 
             #!^ Health & mana
-            "hp": 100,
-            "max_hp": 100,
-            "mp": 25,
-            "max_mp": 25,
+            "hp": 500,
+            "max_hp": 500,
+            "mp": 50,
+            "max_mp": 50,
 
             #!^ Core attributes
             "str": 12,   ## Strength (physical damage)
@@ -80,8 +80,8 @@ class Game:
         }
 
         self.SCALING = {
-            "hp": 25,
-            "max_hp": 25,
+            "hp": 50,
+            "max_hp": 50,
             "mp": 5,
             "max_mp": 5,
             "str": 2,
@@ -147,6 +147,9 @@ class Game:
 
                     if event.key == pygame.K_F1:
                         if self.debug: self.Enemy_Generation_Logic()
+                        else:
+                            self.log = not self.log
+                            print(ANSI.wrap("loggin: " + str(self.log), ANSI.GREEN))
 
                     if event.key == pygame.K_F2:
                         if self.debug:
@@ -203,13 +206,13 @@ class Game:
                                 cast = list(self.spells_damage.items())
                                 spell_key, spell_data = cast[spell_index]
 
-                                print(f"{ANSI.rgb(255,128,0)}{ANSI.BOLD} The Individual know as {self.player_stats_base['name']} is atempting to cast: {spell_data['name']}{ANSI.CURSOR_SAVE}{ANSI.RESET}")
+                                if self.debug: print(f"{ANSI.rgb(255,128,0)}{ANSI.BOLD} The Individual know as {self.player_stats_base['name']} is atempting to cast: {spell_data['name']}{ANSI.CURSOR_SAVE}{ANSI.RESET}")
 
                                 if spell_data["mp_cost"] <= self.player_stats_base["mp"]:
-                                    print(f"{ANSI.CURSOR_RESTORE}{ANSI.BRIGHT_GREEN}{ANSI.BOLD} Success {ANSI.RESET}")
+                                    if self.debug: print(f"{ANSI.CURSOR_RESTORE}{ANSI.BRIGHT_GREEN}{ANSI.BOLD} Success {ANSI.RESET}")
                                     self.pve.Cast(spell_key, spell_data)
                                 else:
-                                    print(f"{ANSI.CURSOR_RESTORE}{ANSI.RED}{ANSI.BOLD} Failed: Mana Def {ANSI.RESET}")
+                                    if self.debug: print(f"{ANSI.CURSOR_RESTORE}{ANSI.RED}{ANSI.BOLD} Failed: Mana Def {ANSI.RESET}")
 
                                 self.mode = "Normal"
 
