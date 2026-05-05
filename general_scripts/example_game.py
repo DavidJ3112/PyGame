@@ -3,8 +3,9 @@ example_game.py  —  shows how to use network.py in a real game
 Run the server in one terminal, then the client in another.
 """
 
-import time
 from network import GameServer, GameClient
+import threading
+import time
 
 
 #!^ ─────────────────────────────────────────────
@@ -13,22 +14,22 @@ from network import GameServer, GameClient
 
 class MyGameServer(GameServer):
 
-    def on_connect(self, gid):
+    def On_Connect(self, gid):
         #!^ tell everyone a new player joined
-        self.broadcast({"type": "player_joined", "gid": gid})
+        self.Broadcast({"type": "player_joined", "gid": gid})
 
-    def on_message(self, gid, conn, data):
+    def On_Message(self, gid, conn, data):
         if data.get("type") == "input":
             x, y = data.get("x", 0), data.get("y", 0)
             print(f"  Player {gid} moved to ({x}, {y})")
 
-            self.broadcast(
+            self.Broadcast(
                 {"type": "player_moved", "gid": gid, "x": x, "y": y},
                 exclude=conn
             )
 
-    def on_disconnect(self, gid):
-        self.broadcast({"type": "player_left", "gid": gid})
+    def On_Disconnect(self, gid):
+        self.Broadcast({"type": "player_left", "gid": gid})
 
 
 #!^ ─────────────────────────────────────────────
@@ -37,10 +38,10 @@ class MyGameServer(GameServer):
 
 class MyGameClient(GameClient):
 
-    def on_ready(self):
+    def On_Ready(self):
         print(f"Joined the game! My GID is {self.gid}")
 
-    def on_message(self, data):
+    def On_Message(self, data):
         t = data.get("type")
         if t == "player_joined":
             print(f"  >> Player {data['gid']} joined the game")
@@ -49,7 +50,7 @@ class MyGameClient(GameClient):
         elif t == "player_left":
             print(f"  >> Player {data['gid']} left the game")
 
-    def on_disconnect(self):
+    def On_Disconnect(self):
         print("Lost connection to server!")
 
 
@@ -57,33 +58,69 @@ class MyGameClient(GameClient):
 #!^  ENTRY POINTS
 #!^ ─────────────────────────────────────────────
 
-ADDRESS = ("127.0.0.1", 5000)
-
-def run_server():
+def Run_Server():
     server = MyGameServer(ADDRESS)
-    server.start()
 
-def run_client():
-    client = MyGameClient(ADDRESS)
-    client.connect()
+    threading.Thread(target=server._Start_Discovery_Beacon, daemon=True).start()
 
-    if not client.wait_until_ready():
-        print("Timed out waiting for server!")
+    server.Start()
+
+def Run_Client(server_ip, poort, client_id=1):
+    address = (server_ip, poort)
+    client = MyGameClient(address)
+    client.Connect()
+
+    if not client.Wait_Until_Ready():
+        print(f"[Client {client_id}] Timed out!")
         return
 
-    #!^ send some position updates
-    for i in range(5):
-        client.send({"type": "input", "gid": client.gid, "x": i * 10, "y": i * 5})
-        time.sleep(2)
+    print(f"[Client {client_id}] Joined with GID: {client.gid}")
 
-    client.disconnect()
+    try:
+        # Move in a circle or pattern so you can see them all working
+        for i in range(10):
+            client.Send({
+                "type": "input", 
+                "x": i * 10 + (client_id * 5), 
+                "y": i * 5
+            })
+            time.sleep(1)
+    finally:
+        client.Disconnect()
+        print(f"[Client {client_id}] Disconnected.")
 
+def Run_Multi_Clients(server_ip, poort, count=10):
+    threads = []
+    print(f"--- Spawning {count} Clients ---")
+    
+    for i in range(count):
+        t = threading.Thread(target=Run_Client, args=(server_ip, poort, i+1))
+        t.start()
+        threads.append(t)
+        time.sleep(0.1) 
+
+    # Wait for all of them to finish
+    for t in threads:
+        t.join()
+
+poort = 5000
 
 if __name__ == "__main__":
     import sys
     if len(sys.argv) < 2:
         print("Usage: python example_game.py server | client")
     elif sys.argv[1] == "server":
-        run_server()
+        selected_ip = MyGameServer.Get_Address()
+        ADDRESS = (selected_ip, poort)
+
+        Run_Server()
     elif sys.argv[1] == "client":
-        run_client()
+        target = MyGameClient.Discover_Server()
+
+        if not target:
+            target = input("Could not find server. Enter IP manually [127.0.0.1]: ").strip()
+            if not target:
+                target = "127.0.0.1"
+
+        Run_Client(target, poort=5000)
+        # Run_Multi_Clients(target, poort, 1)

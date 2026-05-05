@@ -24,7 +24,8 @@ class SaveLoad:
     def get_save_path(slot):
         return os.path.join(
             os.path.dirname(__file__),
-            "Save",
+            "Contend",
+            "Saves",
             f"data_{slot}.json"
         )
 

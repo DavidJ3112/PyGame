@@ -1,0 +1,10 @@
+[INPUT] Enter Port [Default 5000] > 
+[2026-05-05 23:48:25] INFO: Connecting to 10.19.12.127:5000...
+[2026-05-05 23:48:25] SUCCESS: Joined the game! My GID is 2
+[2026-05-05 23:48:25] INFO: Assigned symbol: o
+[2026-05-05 23:48:33] INFO: Player 1, made vaild move ({0}, {2})
+[2026-05-05 23:48:35] INFO: Player 2, made vaild move ({1}, {1})
+[2026-05-05 23:48:39] INFO: Player 1, made vaild move ({0}, {1})
+[2026-05-05 23:48:40] INFO: Player 2, made vaild move ({2}, {2})
+[2026-05-05 23:48:43] INFO: Player 1, made vaild move ({0}, {0})
+[2026-05-05 23:48:43] INFO: x wins the game!

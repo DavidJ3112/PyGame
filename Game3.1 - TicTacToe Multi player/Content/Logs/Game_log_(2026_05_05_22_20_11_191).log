@@ -1,0 +1,83 @@
+[INPUT] Select IP (1-2) [Default 1] > 
+[INPUT] Enter Port [5000] > 
+[2026-05-05 22:20:12] INFO: Discovery beacon active on UDP port 5001
+[2026-05-05 22:20:12] INFO: Game Logic Loop Started.
+[2026-05-05 22:20:12] SUCCESS: Server Listening on ('10.19.12.127', 5000)
+[2026-05-05 22:20:12] INFO: Handling started for GID 1 at ('10.19.12.127', 61914)
+[2026-05-05 22:20:12] SUCCESS: Player GID 1 connected.
+[2026-05-05 22:20:12] INFO: Handling started for GID 2 at ('10.19.12.127', 61915)
+[2026-05-05 22:20:12] SUCCESS: Player GID 2 connected.
+[2026-05-05 22:20:23] WARN: Player GID 2 disconnected.
+[2026-05-05 22:20:23] WARN: Connection thread closed for GID 2
+[2026-05-05 22:20:25] WARN: Player GID 1 disconnected.
+[2026-05-05 22:20:25] WARN: Connection thread closed for GID 1
+[2026-05-05 22:20:30] INFO: Handling started for GID 3 at ('10.19.12.127', 58059)
+[2026-05-05 22:20:30] SUCCESS: Player GID 3 connected.
+[2026-05-05 22:20:37] INFO: Handling started for GID 4 at ('10.19.12.127', 64773)
+[2026-05-05 22:20:37] SUCCESS: Player GID 4 connected.
+[2026-05-05 22:20:42] INFO: Move from GID 4: Col 0, Row 1
+[2026-05-05 22:21:30] WARN: Player GID 3 disconnected.
+[2026-05-05 22:21:30] WARN: Connection thread closed for GID 3
+[2026-05-05 22:21:30] INFO: Handling started for GID 3 at ('10.19.12.127', 51655)
+[2026-05-05 22:21:30] SUCCESS: Player GID 3 connected.
+[2026-05-05 22:21:42] WARN: Player GID 4 disconnected.
+[2026-05-05 22:21:42] WARN: Connection thread closed for GID 4
+[2026-05-05 22:21:42] INFO: Handling started for GID 4 at ('10.19.12.127', 58531)
+[2026-05-05 22:21:42] SUCCESS: Player GID 4 connected.
+[2026-05-05 22:22:30] WARN: Player GID 3 disconnected.
+[2026-05-05 22:22:30] WARN: Connection thread closed for GID 3
+[2026-05-05 22:22:30] INFO: Handling started for GID 3 at ('10.19.12.127', 57094)
+[2026-05-05 22:22:30] SUCCESS: Player GID 3 connected.
+[2026-05-05 22:22:42] WARN: Player GID 4 disconnected.
+[2026-05-05 22:22:42] WARN: Connection thread closed for GID 4
+[2026-05-05 22:22:42] INFO: Handling started for GID 4 at ('10.19.12.127', 52037)
+[2026-05-05 22:22:42] SUCCESS: Player GID 4 connected.
+[2026-05-05 22:22:54] INFO: Move from GID 3: Col 0, Row 1
+[2026-05-05 22:23:42] WARN: Player GID 4 disconnected.
+[2026-05-05 22:23:42] WARN: Connection thread closed for GID 4
+[2026-05-05 22:23:42] INFO: Handling started for GID 4 at ('10.19.12.127', 65131)
+[2026-05-05 22:23:42] SUCCESS: Player GID 4 connected.
+[2026-05-05 22:23:54] WARN: Player GID 3 disconnected.
+[2026-05-05 22:23:54] WARN: Connection thread closed for GID 3
+[2026-05-05 22:23:54] INFO: Handling started for GID 3 at ('10.19.12.127', 51517)
+[2026-05-05 22:23:54] SUCCESS: Player GID 3 connected.
+[2026-05-05 22:24:42] WARN: Player GID 4 disconnected.
+[2026-05-05 22:24:42] WARN: Connection thread closed for GID 4
+[2026-05-05 22:24:42] INFO: Handling started for GID 4 at ('10.19.12.127', 60255)
+[2026-05-05 22:24:42] SUCCESS: Player GID 4 connected.
+[2026-05-05 22:24:54] WARN: Player GID 3 disconnected.
+[2026-05-05 22:24:54] WARN: Connection thread closed for GID 3
+[2026-05-05 22:24:54] INFO: Handling started for GID 3 at ('10.19.12.127', 61746)
+[2026-05-05 22:24:54] SUCCESS: Player GID 3 connected.
+[2026-05-05 22:25:42] WARN: Player GID 4 disconnected.
+[2026-05-05 22:25:42] WARN: Connection thread closed for GID 4
+[2026-05-05 22:25:42] INFO: Handling started for GID 4 at ('10.19.12.127', 53348)
+[2026-05-05 22:25:42] SUCCESS: Player GID 4 connected.
+[2026-05-05 22:25:54] WARN: Player GID 3 disconnected.
+[2026-05-05 22:25:54] WARN: Connection thread closed for GID 3
+[2026-05-05 22:25:54] INFO: Handling started for GID 3 at ('10.19.12.127', 53654)
+[2026-05-05 22:25:54] SUCCESS: Player GID 3 connected.
+[2026-05-05 22:26:42] WARN: Player GID 4 disconnected.
+[2026-05-05 22:26:42] WARN: Connection thread closed for GID 4
+[2026-05-05 22:26:42] INFO: Handling started for GID 4 at ('10.19.12.127', 59380)
+[2026-05-05 22:26:42] SUCCESS: Player GID 4 connected.
+[2026-05-05 22:26:54] WARN: Player GID 3 disconnected.
+[2026-05-05 22:26:54] WARN: Connection thread closed for GID 3
+[2026-05-05 22:26:54] INFO: Handling started for GID 3 at ('10.19.12.127', 61722)
+[2026-05-05 22:26:54] SUCCESS: Player GID 3 connected.
+[2026-05-05 22:27:42] WARN: Player GID 4 disconnected.
+[2026-05-05 22:27:42] WARN: Connection thread closed for GID 4
+[2026-05-05 22:27:42] INFO: Handling started for GID 4 at ('10.19.12.127', 60831)
+[2026-05-05 22:27:42] SUCCESS: Player GID 4 connected.
+[2026-05-05 22:27:54] WARN: Player GID 3 disconnected.
+[2026-05-05 22:27:54] WARN: Connection thread closed for GID 3
+[2026-05-05 22:27:54] INFO: Handling started for GID 3 at ('10.19.12.127', 60305)
+[2026-05-05 22:27:54] SUCCESS: Player GID 3 connected.
+[2026-05-05 22:28:42] WARN: Player GID 4 disconnected.
+[2026-05-05 22:28:42] WARN: Connection thread closed for GID 4
+[2026-05-05 22:28:42] INFO: Handling started for GID 4 at ('10.19.12.127', 62103)
+[2026-05-05 22:28:42] SUCCESS: Player GID 4 connected.
+[2026-05-05 22:28:54] WARN: Player GID 3 disconnected.
+[2026-05-05 22:28:54] WARN: Connection thread closed for GID 3
+[2026-05-05 22:28:54] INFO: Handling started for GID 3 at ('10.19.12.127', 61090)
+[2026-05-05 22:28:54] SUCCESS: Player GID 3 connected.

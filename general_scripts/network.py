@@ -1,259 +1,301 @@
-import socket
-import threading
-import json
-import time
+try:
+    from ANSI import ANSI
+    from Helpers import console
+except ImportError:
+    from .ANSI import ANSI
+    from .Helpers import console
 
+import threading
+import socket
+import json
+import uuid
+import time
 
 #!^ ─────────────────────────────────────────────
 #!^  BASE SERVER
 #!^ ─────────────────────────────────────────────
 
 class GameServer:
-    """
-    Reusable TCP game server base class.
-
-    Usage:
-        class MyServer(GameServer):
-            def on_connect(self, gid):
-                print(f"Player {gid} joined!")
-
-            def on_message(self, gid, conn, data):
-                #!^ handle incoming message, send replies with self.send(conn, {...})
-                self.send(conn, {"type": "ack", "gid": gid})
-
-            def on_disconnect(self, gid):
-                print(f"Player {gid} left.")
-
-        server = MyServer(("0.0.0.0", 5000))
-        server.start()
-    """
-
-    def __init__(self, address):
+    def __init__(self, address, game_id=None, version=None):
         self.address = address
+        self.game_id = game_id
+        self.version = version
+        
         self.next_gid = 1
         self.clients = {}   #!^ conn -> gid
+        self.sessions = {}  #!^ conn -> uuid_str
         self._lock = threading.Lock()
+        
+        #!^ Session recovery tracking
+        self.reconnect_map = {}   #!^ uuid -> {"gid": int, "expiry": float}
+        self.session_timeout = 300 #!^ 5 minute window to rejoin
 
-    #!^ ── override these in your game ──────────────────
+    # --- Overrides ---
+    def On_Connect(self, gid): pass
+    def On_Message(self, gid, conn, data): pass
+    def On_Disconnect(self, gid): pass
 
-    def on_connect(self, gid):
-        """Called when a new client connects."""
-        pass
+    # --- Branding Logic ---
+    def _Validate_Brand(self, data):
+        """Checks if incoming data matches server branding requirements."""
+        if self.game_id and data.get("game_id") != self.game_id:
+            return False, f"Game ID Mismatch (Expected {self.game_id})"
+        if self.version and data.get("version") != self.version:
+            return False, f"Version Mismatch (Expected {self.version})"
+        return True, ""
 
-    def on_message(self, gid, conn, data):
-        """Called for every JSON message received from a client."""
-        pass
+    # --- Helpers ---
+    @staticmethod
+    def Get_Address():
+        host_name = socket.gethostname()
+        addr_info = socket.getaddrinfo(host_name, None, socket.AF_INET, socket.SOCK_STREAM)
+        ips = list(set([info[4][0] for info in addr_info]))
+        if "127.0.0.1" not in ips: ips.append("127.0.0.1")
 
-    def on_disconnect(self, gid):
-        """Called when a client disconnects."""
-        pass
+        print(f"\n{ANSI.CYAN}{ANSI.BOLD}--- Available Network Interfaces ---{ANSI.RESET}")
+        for i, ip in enumerate(ips):
+            print(f"{ANSI.WHITE}{i + 1}. {ip}{ANSI.RESET}")
 
-    #!^ ── helpers ──────────────────────────────────────
+        while True:
+            selection = console.ask(f"Select IP (1-{len(ips)}) [Default 1]").strip()
+            if not selection: return ips[0]
+            try:
+                index = int(selection) - 1
+                if 0 <= index < len(ips): return ips[index]
+            except ValueError: pass
+            console.log("ERROR", "Invalid selection. Please try again.")
 
-    def send(self, conn, data):
-        """Send a JSON message to one client."""
+    def Send(self, conn, data):
+        """Automatically attaches branding if defined."""
+        if self.game_id: data["game_id"] = self.game_id
+        if self.version: data["version"] = self.version
         try:
             conn.sendall((json.dumps(data) + "\n").encode())
-        except OSError:
-            pass
+        except (OSError, BrokenPipeError): pass
 
-    def broadcast(self, data, exclude=None):
-        """Send a JSON message to all connected clients."""
+    def Broadcast(self, data, exclude=None):
         with self._lock:
             targets = list(self.clients.items())
         for conn, gid in targets:
             if conn is not exclude:
-                self.send(conn, data)
+                self.Send(conn, data)
 
-    def get_gid(self, conn):
-        return self.clients.get(conn)
+    def Get_Gid(self, conn):
+        with self._lock:
+            return self.clients.get(conn)
 
-    def get_conn(self, gid):
+    def Get_Conn(self, gid):
         with self._lock:
             for conn, g in self.clients.items():
-                if g == gid:
-                    return conn
+                if g == gid: return conn
         return None
 
-    #!^ ── internals ────────────────────────────────────
+    # --- Discovery ---
+    def _Start_Discovery_Beacon(self, port=5001):
+        broadcast_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        broadcast_sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
+        
+        beacon_data = {
+            "type": "server_discovery", 
+            "port": self.address[1],
+            "game_id": self.game_id
+        }
+        message = json.dumps(beacon_data).encode()
+        console.log("INFO", f"Discovery beacon active (Brand: {self.game_id or 'None'})")
+        
+        while True:
+            try:
+                broadcast_sock.sendto(message, ("<broadcast>", port))
+                time.sleep(2)
+            except Exception: break
 
-    def _handle_client(self, conn, addr):
-        conn.settimeout(60.0)
-        gid = self.clients[conn]
-        print(f"[server] GID {gid} connected: {addr}")
+    # --- Client Handling ---
+    def _Handle_Client(self, conn, addr):
+        conn.settimeout(45.0) 
+        gid = None
+        client_uuid = None
 
-        self.send(conn, {"type": "welcome", "gid": gid})
-        self.on_connect(gid)
-
-        buffer = ""
         try:
+            # 1. Wait for Handshake
+            raw = conn.recv(1024).decode().strip()
+            if not raw: return
+            
+            try:
+                handshake = json.loads(raw)
+                client_uuid = handshake.get("session_id")
+                
+                # Branding Gate
+                valid, error_msg = self._Validate_Brand(handshake)
+                if not valid:
+                    console.log("WARN", f"Rejected {addr}: {error_msg}")
+                    self.Send(conn, {"type": "error", "message": error_msg})
+                    return
+            except json.JSONDecodeError: return
+
+            # 2. Session Logic
+            with self._lock:
+                now = time.time()
+                if client_uuid and client_uuid in self.reconnect_map and now < self.reconnect_map[client_uuid]["expiry"]:
+                    session_info = self.reconnect_map.pop(client_uuid)
+                    gid = session_info["gid"]
+                else:
+                    gid = self.next_gid
+                    self.next_gid += 1
+                    if not client_uuid: client_uuid = str(uuid.uuid4())
+
+                self.clients[conn] = gid
+                self.sessions[conn] = client_uuid
+
+            console.log("INFO", f"GID {gid} connected from {addr}")
+            self.Send(conn, {"type": "welcome", "gid": gid, "session_id": client_uuid})
+            self.On_Connect(gid)
+
+            buffer = ""
             while True:
                 try:
                     part = conn.recv(1024)
-                except ConnectionResetError:
-                    break  #!^ Windows throws this instead of returning b"" on disconnect
-                if not part:
-                    break
+                except (socket.timeout, TimeoutError, ConnectionResetError): break
+                if not part: break
 
                 buffer += part.decode()
-
                 while "\n" in buffer:
                     msg, buffer = buffer.split("\n", 1)
-                    if not msg.strip():
-                        continue
-
+                    if not msg.strip(): continue
                     try:
                         data = json.loads(msg)
-                    except json.JSONDecodeError:
-                        continue
-
-                    self.on_message(gid, conn, data)
-
+                        if data.get("type") == "heartbeat": continue 
+                        
+                        valid, _ = self._Validate_Brand(data)
+                        if valid:
+                            self.On_Message(gid, conn, data)
+                    except json.JSONDecodeError: continue
         finally:
-            conn.close()
             with self._lock:
-                self.clients.pop(conn, None)
-            self.on_disconnect(gid)
-            print(f"[server] GID {gid} disconnected")
+                if conn in self.clients:
+                    this_gid = self.clients.pop(conn)
+                    this_uid = self.sessions.pop(conn)
+                    self.reconnect_map[this_uid] = {
+                        "gid": this_gid,
+                        "expiry": time.time() + self.session_timeout
+                    }
+            conn.close()
+            self.On_Disconnect(gid)
 
-    def start(self):
-        """Start the server (blocking — runs until Ctrl+C)."""
+    def Start(self, max_players=0):
         server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         server.bind(self.address)
         server.listen()
         server.settimeout(1.0)
-        print(f"[server] Listening on {self.address}")
+        
+        print(f"{ANSI.BOLD}{ANSI.CYAN}{ANSI.SAPERATOR}{ANSI.RESET}")
+        console.log("SUCCESS", f"Server Listening on {self.address}")
+        print(f"{ANSI.BOLD}{ANSI.CYAN}{ANSI.SAPERATOR}{ANSI.RESET}")
 
         try:
             while True:
                 try:
                     conn, addr = server.accept()
-                except socket.timeout:
-                    continue
+                except socket.timeout: continue
 
                 with self._lock:
-                    gid = self.next_gid
-                    self.next_gid += 1
-                    self.clients[conn] = gid
+                    if max_players != 0 and len(self.clients) >= max_players:
+                        console.log("WARN", f"Connection rejected from {addr}: Server Full")
+                        rejection = {"type": "error", "message": "Server is full!"}
+                        try: conn.sendall((json.dumps(rejection) + "\n").encode())
+                        except: pass
+                        conn.close()
+                        continue
 
-                threading.Thread(
-                    target=self._handle_client,
-                    args=(conn, addr),
-                    daemon=True
-                ).start()
-
-        except KeyboardInterrupt:
-            print("[server] Shutting down...")
-        finally:
-            server.close()
-            print("[server] Stopped.")
-
+                threading.Thread(target=self._Handle_Client, args=(conn, addr), daemon=True).start()
+        except KeyboardInterrupt: pass
+        finally: server.close()
 
 #!^ ─────────────────────────────────────────────
 #!^  BASE CLIENT
 #!^ ─────────────────────────────────────────────
 
 class GameClient:
-    """
-    Reusable TCP game client base class.
-
-    Usage:
-        class MyClient(GameClient):
-            def on_ready(self):
-                print("Connected! My GID:", self.gid)
-
-            def on_message(self, data):
-                print("Server says:", data)
-
-        client = MyClient(("10.19.12.127", 5000))
-        client.connect()
-        #!^ do stuff...
-        client.send({"type": "input", "x": 10, "y": 5})
-    """
-
-    def __init__(self, address):
+    def __init__(self, address, game_id=None, version=None):
         self.address = address
+        self.game_id = game_id
+        self.version = version
+        
         self.gid = None
+        self.session_id = None 
         self._conn = None
         self._buffer = ""
 
-    #!^ ── override these in your game ──────────────────
+    def On_Ready(self): pass
+    def On_Message(self, data): pass
+    def On_Disconnect(self): pass
 
-    def on_ready(self):
-        """Called once the welcome message is received and gid is set."""
-        pass
+    @staticmethod
+    def Discover_Server(port=5001, timeout=5.0):
+        listener = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        listener.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        listener.bind(("", port))
+        listener.settimeout(timeout)
+        try:
+            data, addr = listener.recvfrom(1024)
+            info = json.loads(data.decode())
+            if info.get("type") == "server_discovery": return addr[0]
+        except Exception: return None
+        finally: listener.close()
 
-    def on_message(self, data):
-        """Called for every JSON message from the server (after welcome)."""
-        pass
-
-    def on_disconnect(self):
-        """Called when the connection drops."""
-        pass
-
-    #!^ ── helpers ──────────────────────────────────────
-
-    def send(self, data):
-        """Send a JSON message to the server."""
+    def Send(self, data):
+        if self.game_id: data["game_id"] = self.game_id
+        if self.version: data["version"] = self.version
         if self._conn:
-            try:
-                self._conn.sendall((json.dumps(data) + "\n").encode())
-            except OSError:
-                pass
+            try: self._conn.sendall((json.dumps(data) + "\n").encode())
+            except OSError: pass
 
-    def wait_until_ready(self, timeout=10.0):
-        """Block until gid is assigned (welcome received) or timeout."""
+    def Wait_Until_Ready(self, timeout=10.0):
         deadline = time.time() + timeout
         while self.gid is None and time.time() < deadline:
             time.sleep(0.05)
         return self.gid is not None
 
-    #!^ ── internals ────────────────────────────────────
-
-    def _receive_loop(self):
-        if self._conn is None:
-            return
+    def _Receive_Loop(self):
+        if self._conn is None: return
         while True:
             try:
                 part = self._conn.recv(1024)
-            except OSError:
-                break
+                if not part: break
+                self._buffer += part.decode()
+                while "\n" in self._buffer:
+                    msg, self._buffer = self._buffer.split("\n", 1)
+                    if not msg.strip(): continue
+                    try:
+                        data = json.loads(msg)
+                        
+                        # Client-side brand filter
+                        if self.game_id and data.get("game_id") != self.game_id:
+                            continue
 
-            if not part:
-                break
+                        if data.get("type") == "welcome":
+                            self.gid = data["gid"]
+                            self.session_id = data.get("session_id")
+                            self.On_Ready()
+                        else: self.On_Message(data)
+                    except json.JSONDecodeError: continue
+            except Exception: break
+        self.On_Disconnect()
 
-            self._buffer += part.decode()
-
-            while "\n" in self._buffer:
-                msg, self._buffer = self._buffer.split("\n", 1)
-                if not msg.strip():
-                    continue
-
-                try:
-                    data = json.loads(msg)
-                except json.JSONDecodeError:
-                    continue
-
-                if data.get("type") == "welcome":
-                    self.gid = data["gid"]
-                    print(f"[client] Connected — GID: {self.gid}")
-                    self.on_ready()
-                else:
-                    self.on_message(data)
-
-        self.on_disconnect()
-        print("[client] Disconnected.")
-
-    def connect(self, start_loop=True):
-        """Connect to the server and start the receive loop in a thread."""
+    def Connect(self, start_loop=True):
         self._conn = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self._conn.connect(self.address)
-        print(f"[client] Connected to {self.address}")
+        try:
+            self._conn.connect(self.address)
+            # Send initial branded handshake
+            self.Send({"type": "handshake", "session_id": self.session_id}) 
+            
+            if start_loop:
+                threading.Thread(target=self._Receive_Loop, daemon=True).start()
+        except Exception as e:
+            console.log("ERROR", f"Socket connection failed: {e}")
+            raise e
 
-        if start_loop:
-            threading.Thread(target=self._receive_loop, daemon=True).start()
-
-    def disconnect(self):
-        if self._conn:
+    def Disconnect(self):
+        if self._conn: 
             self._conn.close()
+            self._conn = None

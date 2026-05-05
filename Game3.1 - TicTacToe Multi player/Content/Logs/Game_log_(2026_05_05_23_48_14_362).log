@@ -1,0 +1,26 @@
+[INPUT] Select IP (1-2) [Default 1] > 
+[INPUT] Enter Port [Default 5000] > 
+[2026-05-05 23:48:15] INFO: Server running at 10.19.12.127:5000
+[2026-05-05 23:48:15] INFO: Starting server discovery beacon...
+[2026-05-05 23:48:15] INFO: Discovery beacon active (Brand: DR_TicTacToe)
+[2026-05-05 23:48:15] INFO: Game Logic Loop Started.
+[2026-05-05 23:48:15] SUCCESS: Server Listening on ('10.19.12.127', 5000)
+[2026-05-05 23:48:17] WARN: Rejected ('10.19.12.127', 60323): Version Mismatch (Expected 2.0)
+[2026-05-05 23:48:17] WARN: Player GID None disconnected.
+[2026-05-05 23:48:17] WARN: Rejected ('10.19.12.127', 60322): Version Mismatch (Expected 2.0)
+[2026-05-05 23:48:17] WARN: Player GID None disconnected.
+[2026-05-05 23:48:21] INFO: GID 1 connected from ('10.19.12.127', 59202)
+[2026-05-05 23:48:21] SUCCESS: Player GID 1 connected.
+[2026-05-05 23:48:25] INFO: GID 2 connected from ('10.19.12.127', 59203)
+[2026-05-05 23:48:25] SUCCESS: Player GID 2 connected.
+[2026-05-05 23:48:33] INFO: gid = 1  data = {'type': 'player_move', 'GID': 1, 'symbol': 'x', 'click_col': 2, 'click_row': 0, 'game_id': 'DR_TicTacToe', 'version': '2.0'}
+[2026-05-05 23:48:33] SUCCESS: Move accepted: x at (0, 2)
+[2026-05-05 23:48:35] INFO: gid = 2  data = {'type': 'player_move', 'GID': 2, 'symbol': 'o', 'click_col': 1, 'click_row': 1, 'game_id': 'DR_TicTacToe', 'version': '2.0'}
+[2026-05-05 23:48:35] SUCCESS: Move accepted: o at (1, 1)
+[2026-05-05 23:48:39] INFO: gid = 1  data = {'type': 'player_move', 'GID': 1, 'symbol': 'x', 'click_col': 1, 'click_row': 0, 'game_id': 'DR_TicTacToe', 'version': '2.0'}
+[2026-05-05 23:48:39] SUCCESS: Move accepted: x at (0, 1)
+[2026-05-05 23:48:40] INFO: gid = 2  data = {'type': 'player_move', 'GID': 2, 'symbol': 'o', 'click_col': 2, 'click_row': 2, 'game_id': 'DR_TicTacToe', 'version': '2.0'}
+[2026-05-05 23:48:40] SUCCESS: Move accepted: o at (2, 2)
+[2026-05-05 23:48:43] INFO: gid = 1  data = {'type': 'player_move', 'GID': 1, 'symbol': 'x', 'click_col': 0, 'click_row': 0, 'game_id': 'DR_TicTacToe', 'version': '2.0'}
+[2026-05-05 23:48:43] SUCCESS: Move accepted: x at (0, 0)
+[2026-05-05 23:48:43] INFO: x wins the game!

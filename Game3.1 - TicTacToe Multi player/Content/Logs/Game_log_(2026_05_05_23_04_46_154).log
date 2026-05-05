@@ -1,0 +1,10 @@
+[INPUT] Select IP (1-2) [Default 1] > 
+[INPUT] Enter Port [Default 5000] > 
+[2026-05-05 23:04:47] INFO: Server running at 10.19.12.127:5000
+[2026-05-05 23:04:47] INFO: Starting server discovery beacon...
+[2026-05-05 23:04:47] INFO: Game Logic Loop Started.
+rand: DR_TicTacToe)
+[2026-05-05 23:04:47] SUCCESS: Server Listening on ('10.19.12.127', 5000)
+[2026-05-05 23:04:47] INFO: GID 1 connected from ('10.19.12.127', 58512)
+[2026-05-05 23:04:47] INFO: GID 2 connected from ('10.19.12.127', 58513)
+[2026-05-05 23:04:47] SUCCESS: Player GID 2 connected.
