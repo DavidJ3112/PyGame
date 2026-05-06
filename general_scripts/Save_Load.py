@@ -1,5 +1,9 @@
-from ANSI import ANSI
+try:
+    from ANSI import ANSI
+except ImportError:
+    from .ANSI import ANSI
 import json
+import sys
 import os
 
 class SaveLoad:
@@ -22,13 +26,13 @@ class SaveLoad:
 
     @staticmethod
     def get_save_path(slot):
+        base_dir = os.path.dirname(os.path.abspath(sys.argv[0]))
         return os.path.join(
-            os.path.dirname(__file__),
+            base_dir,
             "Contend",
             "Saves",
             f"data_{slot}.json"
         )
-
 
 #!^ multi save
 if __name__ == "__main__":
@@ -41,7 +45,7 @@ if __name__ == "__main__":
     SaveLoad.save(SaveLoad.get_save_path(3), {"name": "Eve", "age": 30})
 
 #!^ Single save file
-if __name__ != "__main__":
+if __name__ == "__main__":
     data = {"name": "Rose", "age": 18, "level": 24}
 
     file_location = os.path.join(os.path.dirname(__file__), "Save", "data.json")

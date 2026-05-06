@@ -16,7 +16,7 @@ import time
 #!^ ─────────────────────────────────────────────
 
 class GameServer:
-    def __init__(self, address, game_id=None, version=None):
+    def __init__(self, address, game_id=None, version=None, heartbeat_timeout = 30):
         self.address = address
         self.game_id = game_id
         self.version = version
@@ -26,25 +26,50 @@ class GameServer:
         self.sessions = {}  #!^ conn -> uuid_str
         self._lock = threading.Lock()
         
-        #!^ Session recovery tracking
-        self.reconnect_map = {}   #!^ uuid -> {"gid": int, "expiry": float}
+        #!^ Heartbeat & Session Tracking
+        self.last_seen = {}        #!^ conn -> timestamp
+        self.heartbeat_timeout = heartbeat_timeout #!^ time until kick do to BPS
+        self.reconnect_map = {}    #!^ uuid -> {"gid": int, "expiry": float}
         self.session_timeout = 300 #!^ 5 minute window to rejoin
 
-    # --- Overrides ---
+        #!^ Start the Reaper thread to clean up dead connections
+        threading.Thread(target=self._Heartbeat_Reaper, daemon=True).start()
+
+    #!^ --- Overrides ---
     def On_Connect(self, gid): pass
     def On_Message(self, gid, conn, data): pass
     def On_Disconnect(self, gid): pass
 
-    # --- Branding Logic ---
+    #!^ --- Heartbeat Reaper ---
+    def _Heartbeat_Reaper(self):
+        """Monitor connection health and prune timed-out clients."""
+        while True:
+            time.sleep(5)
+            now = time.time()
+            to_kick = []
+            
+            with self._lock:
+                for conn, last_time in self.last_seen.items():
+                    if now - last_time > self.heartbeat_timeout:
+                        to_kick.append(conn)
+            
+            for conn in to_kick:
+                gid = self.Get_Gid(conn)
+                console.log("WARN", f"GID {gid} timed out (Heartbeat missed)")
+                try:
+                    conn.close()
+                except:
+                    pass
+
+    #!^ --- Branding Logic ---
     def _Validate_Brand(self, data):
-        """Checks if incoming data matches server branding requirements."""
         if self.game_id and data.get("game_id") != self.game_id:
             return False, f"Game ID Mismatch (Expected {self.game_id})"
         if self.version and data.get("version") != self.version:
             return False, f"Version Mismatch (Expected {self.version})"
         return True, ""
 
-    # --- Helpers ---
+    #!^ --- Helpers ---
     @staticmethod
     def Get_Address():
         host_name = socket.gethostname()
@@ -66,7 +91,6 @@ class GameServer:
             console.log("ERROR", "Invalid selection. Please try again.")
 
     def Send(self, conn, data):
-        """Automatically attaches branding if defined."""
         if self.game_id: data["game_id"] = self.game_id
         if self.version: data["version"] = self.version
         try:
@@ -90,7 +114,7 @@ class GameServer:
                 if g == gid: return conn
         return None
 
-    # --- Discovery ---
+    #!^ --- Discovery ---
     def _Start_Discovery_Beacon(self, port=5001):
         broadcast_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         broadcast_sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
@@ -109,22 +133,19 @@ class GameServer:
                 time.sleep(2)
             except Exception: break
 
-    # --- Client Handling ---
+    #!^ --- Client Handling ---
     def _Handle_Client(self, conn, addr):
         conn.settimeout(45.0) 
         gid = None
         client_uuid = None
 
         try:
-            # 1. Wait for Handshake
             raw = conn.recv(1024).decode().strip()
             if not raw: return
             
             try:
                 handshake = json.loads(raw)
                 client_uuid = handshake.get("session_id")
-                
-                # Branding Gate
                 valid, error_msg = self._Validate_Brand(handshake)
                 if not valid:
                     console.log("WARN", f"Rejected {addr}: {error_msg}")
@@ -132,7 +153,6 @@ class GameServer:
                     return
             except json.JSONDecodeError: return
 
-            # 2. Session Logic
             with self._lock:
                 now = time.time()
                 if client_uuid and client_uuid in self.reconnect_map and now < self.reconnect_map[client_uuid]["expiry"]:
@@ -145,6 +165,7 @@ class GameServer:
 
                 self.clients[conn] = gid
                 self.sessions[conn] = client_uuid
+                self.last_seen[conn] = time.time() #!^ Initial heartbeat
 
             console.log("INFO", f"GID {gid} connected from {addr}")
             self.Send(conn, {"type": "welcome", "gid": gid, "session_id": client_uuid})
@@ -163,7 +184,12 @@ class GameServer:
                     if not msg.strip(): continue
                     try:
                         data = json.loads(msg)
-                        if data.get("type") == "heartbeat": continue 
+                        
+                        with self._lock:
+                            self.last_seen[conn] = time.time()
+
+                        if data.get("type") == "heartbeat": 
+                            continue 
                         
                         valid, _ = self._Validate_Brand(data)
                         if valid:
@@ -174,6 +200,7 @@ class GameServer:
                 if conn in self.clients:
                     this_gid = self.clients.pop(conn)
                     this_uid = self.sessions.pop(conn)
+                    self.last_seen.pop(conn, None)
                     self.reconnect_map[this_uid] = {
                         "gid": this_gid,
                         "expiry": time.time() + self.session_timeout
@@ -216,7 +243,7 @@ class GameServer:
 #!^ ─────────────────────────────────────────────
 
 class GameClient:
-    def __init__(self, address, game_id=None, version=None):
+    def __init__(self, address, game_id=None, version=None, bps = 10):
         self.address = address
         self.game_id = game_id
         self.version = version
@@ -225,10 +252,19 @@ class GameClient:
         self.session_id = None 
         self._conn = None
         self._buffer = ""
+        self.heartbeat_interval = bps
 
     def On_Ready(self): pass
     def On_Message(self, data): pass
     def On_Disconnect(self): pass
+
+    def _Heartbeat_Loop(self):
+        while self._conn:
+            try:
+                self.Send({"type": "heartbeat"})
+                time.sleep(self.heartbeat_interval)
+            except:
+                break
 
     @staticmethod
     def Discover_Server(port=5001, timeout=5.0):
@@ -247,8 +283,10 @@ class GameClient:
         if self.game_id: data["game_id"] = self.game_id
         if self.version: data["version"] = self.version
         if self._conn:
-            try: self._conn.sendall((json.dumps(data) + "\n").encode())
-            except OSError: pass
+            try: 
+                self._conn.sendall((json.dumps(data) + "\n").encode())
+            except OSError: 
+                pass
 
     def Wait_Until_Ready(self, timeout=10.0):
         deadline = time.time() + timeout
@@ -268,8 +306,6 @@ class GameClient:
                     if not msg.strip(): continue
                     try:
                         data = json.loads(msg)
-                        
-                        # Client-side brand filter
                         if self.game_id and data.get("game_id") != self.game_id:
                             continue
 
@@ -286,11 +322,11 @@ class GameClient:
         self._conn = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         try:
             self._conn.connect(self.address)
-            # Send initial branded handshake
             self.Send({"type": "handshake", "session_id": self.session_id}) 
             
             if start_loop:
                 threading.Thread(target=self._Receive_Loop, daemon=True).start()
+                threading.Thread(target=self._Heartbeat_Loop, daemon=True).start()
         except Exception as e:
             console.log("ERROR", f"Socket connection failed: {e}")
             raise e

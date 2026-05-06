@@ -1,0 +1,32 @@
+[INPUT] Select IP (1-2) [Default 1] > 
+[INPUT] Enter Port [Default 5000] > 
+[2026-05-06 13:16:27] INFO: Server running at 10.19.12.127:5000
+[2026-05-06 13:16:27] INFO: Starting server discovery beacon...
+[2026-05-06 13:16:27] INFO: Game Logic Loop Started.
+[2026-05-06 13:16:27] INFO: Discovery beacon active (Brand: DR_TicTacToe)
+[2026-05-06 13:16:27] SUCCESS: Server Listening on ('10.19.12.127', 5000)
+[2026-05-06 13:16:28] INFO: GID 1 connected from ('10.19.12.127', 57950)
+[2026-05-06 13:16:28] SUCCESS: Player GID 1 connected.
+[2026-05-06 13:16:28] INFO: GID 2 connected from ('10.19.12.127', 57951)
+[2026-05-06 13:16:28] SUCCESS: Player GID 2 connected.
+[2026-05-06 13:17:39] INFO: gid = 2  data = {'type': 'player_move', 'GID': 2, 'symbol': 'o', 'click_col': 2, 'click_row': 0, 'game_id': 'DR_TicTacToe', 'version': '2.0'}
+[2026-05-06 13:17:39] WARN: Early move attempted by 2
+[2026-05-06 13:17:42] INFO: gid = 1  data = {'type': 'player_move', 'GID': 1, 'symbol': 'x', 'click_col': 2, 'click_row': 0, 'game_id': 'DR_TicTacToe', 'version': '2.0'}
+[2026-05-06 13:17:42] SUCCESS: Move accepted: x at (0, 2)
+[2026-05-06 13:17:44] INFO: gid = 2  data = {'type': 'player_move', 'GID': 2, 'symbol': 'o', 'click_col': 0, 'click_row': 0, 'game_id': 'DR_TicTacToe', 'version': '2.0'}
+[2026-05-06 13:17:44] SUCCESS: Move accepted: o at (0, 0)
+[2026-05-06 13:17:46] INFO: gid = 1  data = {'type': 'player_move', 'GID': 1, 'symbol': 'x', 'click_col': 0, 'click_row': 2, 'game_id': 'DR_TicTacToe', 'version': '2.0'}
+[2026-05-06 13:17:46] SUCCESS: Move accepted: x at (2, 0)
+[2026-05-06 13:17:47] INFO: gid = 2  data = {'type': 'player_move', 'GID': 2, 'symbol': 'o', 'click_col': 1, 'click_row': 1, 'game_id': 'DR_TicTacToe', 'version': '2.0'}
+[2026-05-06 13:17:47] SUCCESS: Move accepted: o at (1, 1)
+[2026-05-06 13:17:49] INFO: gid = 1  data = {'type': 'player_move', 'GID': 1, 'symbol': 'x', 'click_col': 2, 'click_row': 2, 'game_id': 'DR_TicTacToe', 'version': '2.0'}
+[2026-05-06 13:17:49] SUCCESS: Move accepted: x at (2, 2)
+[2026-05-06 13:17:50] INFO: gid = 1  data = {'type': 'player_move', 'GID': 1, 'symbol': 'x', 'click_col': 1, 'click_row': 2, 'game_id': 'DR_TicTacToe', 'version': '2.0'}
+[2026-05-06 13:17:50] WARN: Early move attempted by 1
+[2026-05-06 13:17:51] INFO: gid = 2  data = {'type': 'player_move', 'GID': 2, 'symbol': 'o', 'click_col': 1, 'click_row': 2, 'game_id': 'DR_TicTacToe', 'version': '2.0'}
+[2026-05-06 13:17:51] SUCCESS: Move accepted: o at (2, 1)
+[2026-05-06 13:17:52] INFO: gid = 1  data = {'type': 'player_move', 'GID': 1, 'symbol': 'x', 'click_col': 2, 'click_row': 1, 'game_id': 'DR_TicTacToe', 'version': '2.0'}
+[2026-05-06 13:17:52] SUCCESS: Move accepted: x at (1, 2)
+[2026-05-06 13:17:52] INFO: x wins the game!
+[2026-05-06 13:17:59] WARN: Player GID 2 disconnected.
+[2026-05-06 13:18:00] WARN: Player GID 1 disconnected.

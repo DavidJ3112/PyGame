@@ -1,0 +1,137 @@
+[INPUT] Select IP (1-2) [Default 1] > 
+[INPUT] Enter Port [Default 5000] > 
+[2026-05-06 13:07:33] INFO: Server running at 10.19.12.127:5000
+[2026-05-06 13:07:33] INFO: Starting server discovery beacon...
+[2026-05-06 13:07:33] INFO: Discovery beacon active (Brand: DR_TicTacToe)
+[2026-05-06 13:07:33] INFO: Game Logic Loop Started.
+[2026-05-06 13:07:33] SUCCESS: Server Listening on ('10.19.12.127', 5000)
+[2026-05-06 13:07:41] INFO: GID 1 connected from ('10.19.12.127', 49414)
+[2026-05-06 13:07:41] SUCCESS: Player GID 1 connected.
+[2026-05-06 13:07:53] INFO: GID 2 connected from ('10.19.12.127', 52532)
+[2026-05-06 13:07:53] SUCCESS: Player GID 2 connected.
+[2026-05-06 13:08:13] WARN: GID 1 timed out (Heartbeat missed)
+[2026-05-06 13:08:13] WARN: Player GID 1 disconnected.
+[2026-05-06 13:08:13] INFO: GID 1 connected from ('10.19.12.127', 56664)
+[2026-05-06 13:08:13] SUCCESS: Player GID 1 connected.
+[2026-05-06 13:08:28] WARN: GID 2 timed out (Heartbeat missed)
+[2026-05-06 13:08:28] WARN: Player GID 2 disconnected.
+[2026-05-06 13:08:28] INFO: GID 2 connected from ('10.19.12.127', 55769)
+[2026-05-06 13:08:28] SUCCESS: Player GID 2 connected.
+[2026-05-06 13:08:43] WARN: GID 1 timed out (Heartbeat missed)
+[2026-05-06 13:08:43] WARN: Player GID 1 disconnected.
+[2026-05-06 13:08:43] INFO: GID 1 connected from ('10.19.12.127', 57912)
+[2026-05-06 13:08:43] SUCCESS: Player GID 1 connected.
+[2026-05-06 13:09:03] WARN: GID 2 timed out (Heartbeat missed)
+[2026-05-06 13:09:03] WARN: Player GID 2 disconnected.
+[2026-05-06 13:09:03] INFO: GID 2 connected from ('10.19.12.127', 50657)
+[2026-05-06 13:09:03] SUCCESS: Player GID 2 connected.
+[2026-05-06 13:09:13] WARN: GID 1 timed out (Heartbeat missed)
+[2026-05-06 13:09:13] WARN: Player GID 1 disconnected.
+[2026-05-06 13:09:13] INFO: GID 1 connected from ('10.19.12.127', 60747)
+[2026-05-06 13:09:13] SUCCESS: Player GID 1 connected.
+[2026-05-06 13:09:38] WARN: GID 2 timed out (Heartbeat missed)
+[2026-05-06 13:09:38] WARN: Player GID 2 disconnected.
+[2026-05-06 13:09:38] INFO: GID 2 connected from ('10.19.12.127', 51109)
+[2026-05-06 13:09:38] SUCCESS: Player GID 2 connected.
+[2026-05-06 13:09:43] WARN: GID 1 timed out (Heartbeat missed)
+[2026-05-06 13:09:43] WARN: Player GID 1 disconnected.
+[2026-05-06 13:09:43] INFO: GID 1 connected from ('10.19.12.127', 56782)
+[2026-05-06 13:09:43] SUCCESS: Player GID 1 connected.
+[2026-05-06 13:10:08] WARN: GID 2 timed out (Heartbeat missed)
+[2026-05-06 13:10:08] WARN: Player GID 2 disconnected.
+[2026-05-06 13:10:08] INFO: GID 2 connected from ('10.19.12.127', 58217)
+[2026-05-06 13:10:08] SUCCESS: Player GID 2 connected.
+[2026-05-06 13:10:13] WARN: GID 1 timed out (Heartbeat missed)
+[2026-05-06 13:10:13] WARN: Player GID 1 disconnected.
+[2026-05-06 13:10:13] INFO: GID 1 connected from ('10.19.12.127', 56318)
+[2026-05-06 13:10:13] SUCCESS: Player GID 1 connected.
+[2026-05-06 13:10:43] WARN: GID 2 timed out (Heartbeat missed)
+[2026-05-06 13:10:43] WARN: Player GID 2 disconnected.
+[2026-05-06 13:10:43] WARN: GID 1 timed out (Heartbeat missed)
+[2026-05-06 13:10:43] WARN: Player GID 1 disconnected.
+[2026-05-06 13:10:43] INFO: GID 2 connected from ('10.19.12.127', 64810)
+[2026-05-06 13:10:43] SUCCESS: Player GID 2 connected.
+[2026-05-06 13:10:43] INFO: GID 1 connected from ('10.19.12.127', 64811)
+[2026-05-06 13:10:43] SUCCESS: Player GID 1 connected.
+[2026-05-06 13:11:13] WARN: GID 2 timed out (Heartbeat missed)
+[2026-05-06 13:11:13] WARN: Player GID 2 disconnected.
+[2026-05-06 13:11:13] WARN: GID 1 timed out (Heartbeat missed)
+[2026-05-06 13:11:13] WARN: Player GID 1 disconnected.
+[2026-05-06 13:11:13] INFO: GID 2 connected from ('10.19.12.127', 53771)
+[2026-05-06 13:11:13] INFO: GID 1 connected from ('10.19.12.127', 53772)
+[2026-05-06 13:11:13] SUCCESS: Player GID 2 connected.
+[2026-05-06 13:11:13] SUCCESS: Player GID 1 connected.
+[2026-05-06 13:11:43] WARN: GID 2 timed out (Heartbeat missed)
+[2026-05-06 13:11:43] WARN: Player GID 2 disconnected.
+[2026-05-06 13:11:43] WARN: GID 1 timed out (Heartbeat missed)
+[2026-05-06 13:11:43] WARN: Player GID 1 disconnected.
+[2026-05-06 13:11:43] INFO: GID 2 connected from ('10.19.12.127', 57468)
+[2026-05-06 13:11:43] INFO: GID 1 connected from ('10.19.12.127', 57469)
+[2026-05-06 13:11:43] SUCCESS: Player GID 2 connected.
+[2026-05-06 13:11:43] SUCCESS: Player GID 1 connected.
+[2026-05-06 13:12:18] WARN: GID 2 timed out (Heartbeat missed)
+[2026-05-06 13:12:18] WARN: Player GID 2 disconnected.
+[2026-05-06 13:12:18] WARN: GID 1 timed out (Heartbeat missed)
+[2026-05-06 13:12:18] WARN: Player GID 1 disconnected.
+[2026-05-06 13:12:18] INFO: GID 2 connected from ('10.19.12.127', 55080)
+[2026-05-06 13:12:18] SUCCESS: Player GID 2 connected.
+[2026-05-06 13:12:18] INFO: GID 1 connected from ('10.19.12.127', 55081)
+[2026-05-06 13:12:18] SUCCESS: Player GID 1 connected.
+[2026-05-06 13:12:53] WARN: GID 2 timed out (Heartbeat missed)
+[2026-05-06 13:12:53] WARN: Player GID 2 disconnected.
+[2026-05-06 13:12:53] WARN: GID 1 timed out (Heartbeat missed)
+[2026-05-06 13:12:53] WARN: Player GID 1 disconnected.
+[2026-05-06 13:12:53] INFO: GID 2 connected from ('10.19.12.127', 60001)
+[2026-05-06 13:12:53] INFO: GID 1 connected from ('10.19.12.127', 60002)
+[2026-05-06 13:12:53] SUCCESS: Player GID 2 connected.
+[2026-05-06 13:12:53] SUCCESS: Player GID 1 connected.
+[2026-05-06 13:13:23] WARN: GID 2 timed out (Heartbeat missed)
+[2026-05-06 13:13:23] WARN: Player GID 2 disconnected.
+[2026-05-06 13:13:23] WARN: GID 1 timed out (Heartbeat missed)
+[2026-05-06 13:13:23] WARN: Player GID 1 disconnected.
+[2026-05-06 13:13:23] INFO: GID 2 connected from ('10.19.12.127', 50556)
+[2026-05-06 13:13:23] INFO: GID 1 connected from ('10.19.12.127', 50557)
+[2026-05-06 13:13:23] SUCCESS: Player GID 2 connected.
+[2026-05-06 13:13:23] SUCCESS: Player GID 1 connected.
+[2026-05-06 13:13:53] WARN: GID 2 timed out (Heartbeat missed)
+[2026-05-06 13:13:53] WARN: Player GID 2 disconnected.
+[2026-05-06 13:13:53] WARN: GID 1 timed out (Heartbeat missed)
+[2026-05-06 13:13:53] WARN: Player GID 1 disconnected.
+[2026-05-06 13:13:53] INFO: GID 2 connected from ('10.19.12.127', 50047)
+[2026-05-06 13:13:53] INFO: GID 1 connected from ('10.19.12.127', 50048)
+[2026-05-06 13:13:53] SUCCESS: Player GID 2 connected.
+[2026-05-06 13:13:53] SUCCESS: Player GID 1 connected.
+[2026-05-06 13:14:23] WARN: GID 2 timed out (Heartbeat missed)
+[2026-05-06 13:14:23] WARN: Player GID 2 disconnected.
+[2026-05-06 13:14:23] INFO: GID 2 connected from ('10.19.12.127', 60995)
+[2026-05-06 13:14:23] SUCCESS: Player GID 2 connected.
+[2026-05-06 13:14:28] WARN: GID 1 timed out (Heartbeat missed)
+[2026-05-06 13:14:28] WARN: Player GID 1 disconnected.
+[2026-05-06 13:14:28] INFO: GID 1 connected from ('10.19.12.127', 54372)
+[2026-05-06 13:14:28] SUCCESS: Player GID 1 connected.
+[2026-05-06 13:14:58] WARN: GID 2 timed out (Heartbeat missed)
+[2026-05-06 13:14:58] WARN: Player GID 2 disconnected.
+[2026-05-06 13:14:58] INFO: GID 2 connected from ('10.19.12.127', 61451)
+[2026-05-06 13:14:58] SUCCESS: Player GID 2 connected.
+[2026-05-06 13:15:03] WARN: GID 1 timed out (Heartbeat missed)
+[2026-05-06 13:15:03] WARN: Player GID 1 disconnected.
+[2026-05-06 13:15:03] INFO: GID 1 connected from ('10.19.12.127', 64578)
+[2026-05-06 13:15:03] SUCCESS: Player GID 1 connected.
+[2026-05-06 13:15:33] WARN: GID 2 timed out (Heartbeat missed)
+[2026-05-06 13:15:33] WARN: Player GID 2 disconnected.
+[2026-05-06 13:15:33] WARN: GID 1 timed out (Heartbeat missed)
+[2026-05-06 13:15:33] WARN: Player GID 1 disconnected.
+[2026-05-06 13:15:33] INFO: GID 2 connected from ('10.19.12.127', 57536)
+[2026-05-06 13:15:33] SUCCESS: Player GID 2 connected.
+[2026-05-06 13:15:33] INFO: GID 1 connected from ('10.19.12.127', 57537)
+[2026-05-06 13:15:33] SUCCESS: Player GID 1 connected.
+[2026-05-06 13:16:03] WARN: GID 2 timed out (Heartbeat missed)
+[2026-05-06 13:16:03] WARN: Player GID 2 disconnected.
+[2026-05-06 13:16:03] INFO: GID 2 connected from ('10.19.12.127', 53196)
+[2026-05-06 13:16:03] SUCCESS: Player GID 2 connected.
+[2026-05-06 13:16:07] WARN: Player GID 1 disconnected.
+[2026-05-06 13:16:10] INFO: GID 3 connected from ('10.19.12.127', 52336)
+[2026-05-06 13:16:10] SUCCESS: Player GID 3 connected.
+[2026-05-06 13:16:16] WARN: Player GID 2 disconnected.
+[2026-05-06 13:16:18] INFO: GID 4 connected from ('10.19.12.127', 50526)
+[2026-05-06 13:16:18] SUCCESS: Player GID 4 connected.

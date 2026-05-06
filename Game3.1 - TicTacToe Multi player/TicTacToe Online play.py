@@ -74,6 +74,7 @@ class MyClient(GameClient):
             
             if start_loop:
                 threading.Thread(target=self._Receive_Loop, daemon=True).start()
+                threading.Thread(target=self._Heartbeat_Loop, daemon=True).start()
         except Exception as e:
             raise e 
 
@@ -272,7 +273,6 @@ class PlayerGame():
         self.client = client_instance
         self.client.game_ref = self
         self.current_board = None
-        self.last_hearbeat = 0
         
         self.screen = pygame.display.set_mode((640, 640))
         self.Clock = pygame.time.Clock()
@@ -291,10 +291,6 @@ class PlayerGame():
         while self.running:
             pygame.display.set_caption(f"Tic Tac Toe Player: {self.client.symbol}")
             self.Clock.tick(self.FPS)
-            
-            if time.time() - self.last_hearbeat > 30:
-                self.client.Send({"type": "heartbeat"})
-                self.last_hearbeat = time.time()
 
             self.screen.fill(self.BGC)
             self.Events()
