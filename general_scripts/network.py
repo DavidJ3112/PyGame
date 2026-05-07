@@ -16,7 +16,17 @@ import time
 #!^ ─────────────────────────────────────────────
 
 class GameServer:
-    def __init__(self, address, game_id=None, version=None, heartbeat_timeout = 30):
+    """Base class for a threaded TCP game server with session management."""
+    
+    def __init__(self, address, game_id=None, version=None, heartbeat_timeout=30):
+        """
+        Initialize the server settings and session tracking.
+        Args:
+            address (tuple): (ip, port) to bind the server.
+            game_id (str): Optional identifier for branding/validation.
+            version (str): Optional version string for compatibility checks.
+            heartbeat_timeout (int): Seconds before a silent client is kicked.
+        """
         self.address = address
         self.game_id = game_id
         self.version = version
@@ -28,21 +38,28 @@ class GameServer:
         
         #!^ Heartbeat & Session Tracking
         self.last_seen = {}        #!^ conn -> timestamp
-        self.heartbeat_timeout = heartbeat_timeout #!^ time until kick do to BPS
+        self.heartbeat_timeout = heartbeat_timeout 
         self.reconnect_map = {}    #!^ uuid -> {"gid": int, "expiry": float}
         self.session_timeout = 300 #!^ 5 minute window to rejoin
 
-        #!^ Start the Reaper thread to clean up dead connections
         threading.Thread(target=self._Heartbeat_Reaper, daemon=True).start()
 
     #!^ --- Overrides ---
-    def On_Connect(self, gid): pass
-    def On_Message(self, gid, conn, data): pass
-    def On_Disconnect(self, gid): pass
+    def On_Connect(self, gid): 
+        """Callback triggered when a client successfully connects."""
+        pass
+
+    def On_Message(self, gid, conn, data): 
+        """Callback triggered when a valid JSON message is received."""
+        pass
+
+    def On_Disconnect(self, gid): 
+        """Callback triggered when a client disconnects or times out."""
+        pass
 
     #!^ --- Heartbeat Reaper ---
     def _Heartbeat_Reaper(self):
-        """Monitor connection health and prune timed-out clients."""
+        """Internal loop to disconnect clients exceeding the heartbeat_timeout."""
         while True:
             time.sleep(5)
             now = time.time()
@@ -63,6 +80,13 @@ class GameServer:
 
     #!^ --- Branding Logic ---
     def _Validate_Brand(self, data):
+        """
+        Verifies that incoming data matches server game_id and version.
+        Args:
+            data (dict): The message payload to validate.
+        Returns:
+            tuple: (bool success, str error_message)
+        """
         if self.game_id and data.get("game_id") != self.game_id:
             return False, f"Game ID Mismatch (Expected {self.game_id})"
         if self.version and data.get("version") != self.version:
@@ -72,6 +96,7 @@ class GameServer:
     #!^ --- Helpers ---
     @staticmethod
     def Get_Address():
+        """Prompts the user to select an available local IP address."""
         host_name = socket.gethostname()
         addr_info = socket.getaddrinfo(host_name, None, socket.AF_INET, socket.SOCK_STREAM)
         ips = list(set([info[4][0] for info in addr_info]))
@@ -91,6 +116,12 @@ class GameServer:
             console.log("ERROR", "Invalid selection. Please try again.")
 
     def Send(self, conn, data):
+        """
+        Sends a JSON-encoded message to a specific connection.
+        Args:
+            conn (socket): The recipient's socket object.
+            data (dict): The dictionary payload to send.
+        """
         if self.game_id: data["game_id"] = self.game_id
         if self.version: data["version"] = self.version
         try:
@@ -98,6 +129,12 @@ class GameServer:
         except (OSError, BrokenPipeError): pass
 
     def Broadcast(self, data, exclude=None):
+        """
+        Sends a message to all connected clients.
+        Args:
+            data (dict): The dictionary payload to send.
+            exclude (socket): Optional socket to skip during broadcast.
+        """
         with self._lock:
             targets = list(self.clients.items())
         for conn, gid in targets:
@@ -105,17 +142,24 @@ class GameServer:
                 self.Send(conn, data)
 
     def Get_Gid(self, conn):
+        """Returns the Game ID (gid) associated with a socket."""
         with self._lock:
             return self.clients.get(conn)
 
     def Get_Conn(self, gid):
+        """Returns the socket object associated with a Game ID (gid)."""
         with self._lock:
             for conn, g in self.clients.items():
                 if g == gid: return conn
         return None
 
     #!^ --- Discovery ---
-    def _Start_Discovery_Beacon(self, port=5001):
+    def _Start_Discovery_Beacon(self, port=6000):
+        """
+        Starts a UDP broadcast loop to let clients find the server.
+        Args:
+            port (int): UDP port to broadcast on.
+        """
         broadcast_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         broadcast_sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
         
@@ -135,6 +179,12 @@ class GameServer:
 
     #!^ --- Client Handling ---
     def _Handle_Client(self, conn, addr):
+        """
+        Internal loop for managing a single client connection.
+        Args:
+            conn (socket): The client socket.
+            addr (tuple): The client (ip, port).
+        """
         conn.settimeout(45.0) 
         gid = None
         client_uuid = None
@@ -165,7 +215,7 @@ class GameServer:
 
                 self.clients[conn] = gid
                 self.sessions[conn] = client_uuid
-                self.last_seen[conn] = time.time() #!^ Initial heartbeat
+                self.last_seen[conn] = time.time() 
 
             console.log("INFO", f"GID {gid} connected from {addr}")
             self.Send(conn, {"type": "welcome", "gid": gid, "session_id": client_uuid})
@@ -209,6 +259,11 @@ class GameServer:
             self.On_Disconnect(gid)
 
     def Start(self, max_players=0):
+        """
+        Binds the socket and begins accepting client connections.
+        Args:
+            max_players (int): Maximum concurrent connections (0 for unlimited).
+        """
         server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         server.bind(self.address)
@@ -243,7 +298,17 @@ class GameServer:
 #!^ ─────────────────────────────────────────────
 
 class GameClient:
-    def __init__(self, address, game_id=None, version=None, bps = 10):
+    """Base class for a TCP game client with automatic heartbeat and discovery."""
+    
+    def __init__(self, address, game_id=None, version=None, bps=10):
+        """
+        Initialize client settings.
+        Args:
+            address (tuple): (ip, port) of the server.
+            game_id (str): Optional identifier for validation.
+            version (str): Optional version string for validation.
+            bps (int): Beats Per Second (interval) for heartbeats.
+        """
         self.address = address
         self.game_id = game_id
         self.version = version
@@ -254,11 +319,20 @@ class GameClient:
         self._buffer = ""
         self.heartbeat_interval = bps
 
-    def On_Ready(self): pass
-    def On_Message(self, data): pass
-    def On_Disconnect(self): pass
+    def On_Ready(self): 
+        """Callback triggered when the server sends the welcome handshake."""
+        pass
+
+    def On_Message(self, data): 
+        """Callback triggered when a valid JSON message is received."""
+        pass
+
+    def On_Disconnect(self): 
+        """Callback triggered when the connection is lost."""
+        pass
 
     def _Heartbeat_Loop(self):
+        """Internal loop to keep the connection alive via heartbeat messages."""
         while self._conn:
             try:
                 self.Send({"type": "heartbeat"})
@@ -268,6 +342,14 @@ class GameClient:
 
     @staticmethod
     def Discover_Server(port=5001, timeout=5.0):
+        """
+        Listens for a UDP server discovery beacon.
+        Args:
+            port (int): UDP port to listen on.
+            timeout (float): Seconds to wait before giving up.
+        Returns:
+            str: The IP of the discovered server, or None.
+        """
         listener = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         listener.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         listener.bind(("", port))
@@ -280,6 +362,11 @@ class GameClient:
         finally: listener.close()
 
     def Send(self, data):
+        """
+        Sends a JSON-encoded message to the server.
+        Args:
+            data (dict): The dictionary payload to send.
+        """
         if self.game_id: data["game_id"] = self.game_id
         if self.version: data["version"] = self.version
         if self._conn:
@@ -289,12 +376,20 @@ class GameClient:
                 pass
 
     def Wait_Until_Ready(self, timeout=10.0):
+        """
+        Blocks until the client has connected and received a GID.
+        Args:
+            timeout (float): Max seconds to wait.
+        Returns:
+            bool: True if ready, False if timeout reached.
+        """
         deadline = time.time() + timeout
         while self.gid is None and time.time() < deadline:
             time.sleep(0.05)
         return self.gid is not None
 
     def _Receive_Loop(self):
+        """Internal loop for receiving and parsing messages from the server."""
         if self._conn is None: return
         while True:
             try:
@@ -319,6 +414,11 @@ class GameClient:
         self.On_Disconnect()
 
     def Connect(self, start_loop=True):
+        """
+        Establishes a connection to the server and starts listener threads.
+        Args:
+            start_loop (bool): Whether to start receiving and heartbeat threads immediately.
+        """
         self._conn = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         try:
             self._conn.connect(self.address)
@@ -332,6 +432,7 @@ class GameClient:
             raise e
 
     def Disconnect(self):
+        """Closes the active socket connection."""
         if self._conn: 
             self._conn.close()
             self._conn = None

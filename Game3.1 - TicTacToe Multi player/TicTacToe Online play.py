@@ -13,7 +13,7 @@ from general_scripts.network import GameServer, GameClient
 from general_scripts.Helpers import console
 from general_scripts.ANSI import ANSI
 
-console.set_max_logs(50)
+console.set_max_logs(count= 50)
 
 class MyServer(GameServer):
     def __init__(self, address, game_id, version, game_logic=None):

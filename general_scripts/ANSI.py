@@ -2,6 +2,8 @@ import shutil
 
 
 class ANSI:
+    """A collection of ANSI escape sequences for terminal styling and control."""
+
     #!^ ── Main ───────────────────────────────────────────────────────────────
     RESET           = "\033[0m"
     NEW_LINE        = "\n"
@@ -40,15 +42,15 @@ class ANSI:
     BRIGHT_WHITE    = "\033[97m"
 
     #!^ ── Background colors ──────────────────────────────────────────────────
-    BG_BLACK        = "\033[40m"
-    BG_RED          = "\033[41m"
-    BG_GREEN        = "\033[42m"
-    BG_YELLOW       = "\033[43m"
-    BG_BLUE         = "\033[44m"
-    BG_MAGENTA      = "\033[45m"
-    BG_CYAN         = "\033[46m"
-    BG_WHITE        = "\033[47m"
-    DEFAULT_BG      = "\033[49m"
+    BG_BLACK         = "\033[40m"
+    BG_RED           = "\033[41m"
+    BG_GREEN         = "\033[42m"
+    BG_YELLOW        = "\033[43m"
+    BG_BLUE          = "\033[44m"
+    BG_MAGENTA       = "\033[45m"
+    BG_CYAN          = "\033[46m"
+    BG_WHITE         = "\033[47m"
+    DEFAULT_BG       = "\033[49m"
 
     #!^ ── Bright background variants ────────────────────────────────────────
     BG_BRIGHT_BLACK   = "\033[100m"
@@ -82,14 +84,14 @@ class ANSI:
     CARRIAGE_RETURN     = "\r"      ## Move to start of current line (no erase)
 
     #!^ ── Screen control ─────────────────────────────────────────────────────
-    CLEAR_SCREEN        = "\033[2J"     ## Clear entire screen
-    CLEAR_SCREEN_END    = "\033[0J"     ## Clear from cursor to end of screen
-    CLEAR_SCREEN_START  = "\033[1J"     ## Clear from cursor to start of screen
-    CLEAR_SCROLLBACK    = "\033[3J"     ## Clear screen + scrollback buffer
-    SCREEN_SAVE         = "\033[?47h"   ## Save screen state
-    SCREEN_RESTORE      = "\033[?47l"   ## Restore saved screen state
-    ALT_SCREEN_ON       = "\033[?1049h" ## Switch to alternate screen buffer
-    ALT_SCREEN_OFF      = "\033[?1049l" ## Switch back from alternate screen buffer
+    CLEAR_SCREEN         = "\033[2J"     ## Clear entire screen
+    CLEAR_SCREEN_END     = "\033[0J"     ## Clear from cursor to end of screen
+    CLEAR_SCREEN_START   = "\033[1J"     ## Clear from cursor to start of screen
+    CLEAR_SCROLLBACK     = "\033[3J"     ## Clear screen + scrollback buffer
+    SCREEN_SAVE          = "\033[?47h"   ## Save screen state
+    SCREEN_RESTORE       = "\033[?47l"   ## Restore saved screen state
+    ALT_SCREEN_ON        = "\033[?1049h" ## Switch to alternate screen buffer
+    ALT_SCREEN_OFF       = "\033[?1049l" ## Switch back from alternate screen buffer
 
     #!^ ── Scrolling ──────────────────────────────────────────────────────────
     SCROLL_UP           = "\033[S"  ## Scroll viewport up 1 line
@@ -98,105 +100,197 @@ class ANSI:
     #!^ ── Dynamic cursor helpers ─────────────────────────────────────────────
     @staticmethod
     def up(n: int = 1) -> str:
-        """Move cursor up N lines."""
+        """
+        Generates an ANSI sequence to move the cursor up.
+        Args:
+            n (int): Number of lines to move.
+        Returns:
+            str: The ANSI escape sequence.
+        """
         return f"\033[{n}A"
 
     @staticmethod
     def down(n: int = 1) -> str:
-        """Move cursor down N lines."""
+        """
+        Generates an ANSI sequence to move the cursor down.
+        Args:
+            n (int): Number of lines to move.
+        Returns:
+            str: The ANSI escape sequence.
+        """
         return f"\033[{n}B"
 
     @staticmethod
     def right(n: int = 1) -> str:
-        """Move cursor right N columns."""
+        """
+        Generates an ANSI sequence to move the cursor right.
+        Args:
+            n (int): Number of columns to move.
+        Returns:
+            str: The ANSI escape sequence.
+        """
         return f"\033[{n}C"
 
     @staticmethod
     def left(n: int = 1) -> str:
-        """Move cursor left N columns."""
+        """
+        Generates an ANSI sequence to move the cursor left.
+        Args:
+            n (int): Number of columns to move.
+        Returns:
+            str: The ANSI escape sequence.
+        """
         return f"\033[{n}D"
 
     @staticmethod
     def move_to(row: int, col: int) -> str:
-        """Move cursor to absolute position (row, col) — 1-indexed."""
+        """
+        Generates an ANSI sequence to move cursor to an absolute position.
+        Args:
+            row (int): The 1-indexed row number.
+            col (int): The 1-indexed column number.
+        Returns:
+            str: The ANSI escape sequence.
+        """
         return f"\033[{row};{col}H"
 
     @staticmethod
     def line_up(n: int = 1) -> str:
-        """Move to the start of the line N lines up."""
+        """
+        Moves the cursor to the start of the line N lines up.
+        Args:
+            n (int): Number of lines to move up.
+        Returns:
+            str: The ANSI escape sequence.
+        """
         return f"\033[{n}F"
 
     @staticmethod
     def line_down(n: int = 1) -> str:
-        """Move to the start of the line N lines down."""
+        """
+        Moves the cursor to the start of the line N lines down.
+        Args:
+            n (int): Number of lines to move down.
+        Returns:
+            str: The ANSI escape sequence.
+        """
         return f"\033[{n}E"
 
     @staticmethod
     def scroll_up(n: int = 1) -> str:
-        """Scroll viewport up N lines."""
+        """
+        Generates sequence to scroll the viewport up.
+        Args:
+            n (int): Number of lines to scroll.
+        Returns:
+            str: The ANSI escape sequence.
+        """
         return f"\033[{n}S"
 
     @staticmethod
     def scroll_down(n: int = 1) -> str:
-        """Scroll viewport down N lines."""
+        """
+        Generates sequence to scroll the viewport down.
+        Args:
+            n (int): Number of lines to scroll.
+        Returns:
+            str: The ANSI escape sequence.
+        """
         return f"\033[{n}T"
     
     @staticmethod
     def move_to_col(n: int) -> str:
-        """Move cursor to absolute column N on current line (1-indexed)."""
+        """
+        Moves cursor to an absolute column on the current line.
+        Args:
+            n (int): The 1-indexed column number.
+        Returns:
+            str: The ANSI escape sequence.
+        """
         return f"\033[{n}G"
 
     #!^ ── Color helpers ──────────────────────────────────────────────────────
     @staticmethod
     def rgb(r: int, g: int, b: int) -> str:
-        """True-color (24-bit) foreground: ANSI.rgb(255, 128, 0)"""
+        """
+        Generates a 24-bit true-color foreground ANSI sequence.
+        Args:
+            r (int): Red component (0-255).
+            g (int): Green component (0-255).
+            b (int): Blue component (0-255).
+        Returns:
+            str: The ANSI escape sequence.
+        """
         return f"\033[38;2;{r};{g};{b}m"
 
     @staticmethod
     def bg_rgb(r: int, g: int, b: int) -> str:
-        """True-color (24-bit) background: ANSI.bg_rgb(0, 0, 128)"""
+        """
+        Generates a 24-bit true-color background ANSI sequence.
+        Args:
+            r (int): Red component (0-255).
+            g (int): Green component (0-255).
+            b (int): Blue component (0-255).
+        Returns:
+            str: The ANSI escape sequence.
+        """
         return f"\033[48;2;{r};{g};{b}m"
 
     @staticmethod
     def color256(n: int) -> str:
-        """256-color foreground (0-255): ANSI.color256(214)"""
+        """
+        Generates a 256-color foreground ANSI sequence.
+        Args:
+            n (int): Color index (0-255).
+        Returns:
+            str: The ANSI escape sequence.
+        """
         return f"\033[38;5;{n}m"
 
     @staticmethod
     def bg_color256(n: int) -> str:
-        """256-color background (0-255): ANSI.bg_color256(214)"""
+        """
+        Generates a 256-color background ANSI sequence.
+        Args:
+            n (int): Color index (0-255).
+        Returns:
+            str: The ANSI escape sequence.
+        """
         return f"\033[48;5;{n}m"
 
     #!^ ── Text helpers ───────────────────────────────────────────────────────
     @staticmethod
     def wrap(text: str, *codes: str) -> str:
-        """Wrap text with one or more ANSI codes and auto-reset at the end.
-
-        Example:
-            print(ANSI.wrap("Hello!", ANSI.BOLD, ANSI.RED))
+        """
+        Wraps text with one or more ANSI codes and appends a reset.
+        Args:
+            text (str): The string to be formatted.
+            *codes (str): Variable number of ANSI escape sequences.
+        Returns:
+            str: The formatted string ending with RESET.
         """
         return "".join(codes) + text + ANSI.RESET
 
     @staticmethod
     def overwrite(text: str) -> str:
-        """Overwrite the current line with new text.
-
-        Example:
-            print("Loading...", end="", flush=True)
-            time.sleep(1)
-            print(ANSI.overwrite("Done!"))
+        """
+        Returns a sequence to clear the current line and write new text.
+        Args:
+            text (str): The text to write on the cleared line.
+        Returns:
+            str: The ANSI sequence and text.
         """
         return f"\r\033[2K{text}"
 
     @staticmethod
     def overwrite_above(text: str, n: int = 1) -> str:
-        """Move N lines up and overwrite that line with new text.
-
-        Example:
-            print("Step 1...")
-            print("Step 2...")
-            time.sleep(1)
-            print(ANSI.overwrite_above("Step 1 done!", n=2))
+        """
+        Moves up N lines, clears that line, and writes new text.
+        Args:
+            text (str): The text to write.
+            n (int): How many lines to move up before overwriting.
+        Returns:
+            str: The ANSI escape sequence and text.
         """
         return f"\033[{n}F\033[2K{text}"
 
