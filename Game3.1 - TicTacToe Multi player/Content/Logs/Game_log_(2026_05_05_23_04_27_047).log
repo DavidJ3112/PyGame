@@ -1,7 +1,0 @@
-[INPUT] Select IP (1-2) [Default 1] > 
-[INPUT] Enter Port [Default 5000] > 
-[2026-05-05 23:04:27] INFO: Server running at 10.19.12.127:5000
-[2026-05-05 23:04:27] INFO: Starting server discovery beacon...
-[2026-05-05 23:04:27] INFO: Discovery beacon active (Brand: DR_TicTacToe)
-[2026-05-05 23:04:27] INFO: Game Logic Loop Started.
-[2026-05-05 23:04:27] SUCCESS: Server Listening on ('10.19.12.127', 5000)

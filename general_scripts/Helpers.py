@@ -1,97 +1,120 @@
-try:
-    from ANSI import ANSI
-except ImportError:
-    from .ANSI import ANSI
 import itertools
 import datetime
 import time
 import sys
 import os
 import re
+import threading
+
+try:
+    from ANSI import ANSI
+except ImportError:
+    from .ANSI import ANSI
 
 class console():
     """A static utility class for formatted console output, input, and file logging."""
     
     _entry_dir = os.path.dirname(os.path.abspath(sys.argv[0]))
     LOG_DIR = os.path.join(_entry_dir, "Content", "Logs")
-    
-    _ts = datetime.datetime.now().strftime("%Y_%m_%d_%H_%M_%S_%f")[:-3]
-    LOG_FILE = os.path.join(LOG_DIR, f"Game_log_({_ts}).log")
-    
-    _cleaned_up = False
+    _game_name = os.path.splitext(os.path.basename(sys.argv[0]))[0]
+
+    LOG_FILE = None
     MAX_LOG_FILES = 5
+    _cleaned_up = False
+    _session_history = []
 
     @classmethod
     def set_max_logs(cls, count: int):
         """
-        Sets the maximum number of log files to keep in the directory.
+        Sets the maximum number of log files to keep in storage.
         Args:
-            count (int): The number of recent logs to retain.
+            count (int): The number of historical log files to retain.
         """
         cls.MAX_LOG_FILES = count
 
     @staticmethod
     def _prepare_log_system():
-        """Creates the log directory and prunes old log files to stay under the limit."""
+        """
+        Ensures log directories exist and performs rotation of old log files.
+        """
         if not os.path.exists(console.LOG_DIR):
             os.makedirs(console.LOG_DIR, exist_ok=True)
+
+        if console.LOG_FILE is None:
+            ts = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+            pid = os.getpid()
+            console.LOG_FILE = os.path.join(console.LOG_DIR, f"{console._game_name}_{ts}_PID{pid}.log")
         
         if not console._cleaned_up:
             try:
                 files = [os.path.join(console.LOG_DIR, f) for f in os.listdir(console.LOG_DIR) if f.endswith(".log")]
-                if len(files) >= console.MAX_LOG_FILES:
-                    files.sort(key=os.path.getmtime)
-                    to_delete = len(files) - console.MAX_LOG_FILES + 1
-                    for i in range(to_delete):
-                        os.remove(files[i])
+                files.sort(key=os.path.getctime)
+                if len(files) > console.MAX_LOG_FILES:
+                    for i in range(len(files) - console.MAX_LOG_FILES):
+                        if files[i] != console.LOG_FILE:
+                            try: os.remove(files[i])
+                            except: pass
                 console._cleaned_up = True
-            except Exception:
-                pass
+            except Exception: pass
 
     @staticmethod
     def _strip_ansi(text):
         """
-        Removes ANSI escape sequences from a string for clean text file storage.
+        Removes ANSI escape codes from string for clean file logging.
         Args:
-            text (str): The string containing ANSI codes.
+            text (str): String containing ANSI escape sequences.
         Returns:
-            str: The sanitized plain-text string.
+            str: Plain text without escape sequences.
         """
         ansi_escape = re.compile(r'\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])')
         return ansi_escape.sub('', text)
 
     @staticmethod
-    def save_to_file(message):
+    def save_to_file(message: str):
         """
-        Appends a sanitized message to the current session's log file.
+        Appends a message to the log file and cache; restores file if deleted.
         Args:
-            message (str): The string to write to the file.
+            message (str): The text message to be saved.
         """
         console._prepare_log_system()
+        if console.LOG_FILE is None: return
+
         clean_message = console._strip_ansi(message)
+        console._session_history.append(clean_message)
+
         try:
-            with open(console.LOG_FILE, "a", encoding="utf-8") as f:
-                f.write(clean_message + "\n")
-        except Exception:
-            pass
+            if not os.path.exists(console.LOG_FILE):
+                with open(str(console.LOG_FILE), "w", encoding="utf-8") as f:
+                    f.write("\n".join(console._session_history) + "\n")
+            else:
+                with open(str(console.LOG_FILE), "a", encoding="utf-8") as f:
+                    f.write(clean_message + "\n")
+        except Exception: pass
 
     @staticmethod
     def log(level, message):
         """
-        Prints a timestamped, color-coded message and saves it to the log file.
+        Prints a timestamped, color-coded message to console and saves to log.
         Args:
-            level (str): The severity level (INFO, ERROR, WARN, SUCCESS).
-            message (str): The content to log.
+            level (str): Log severity (TRACE, DEBUG, INFO, SUCCESS, NOTICE, WARN, ERROR, CRITICAL).
+            message (str): The message content to log.
         """
         timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        
+        # Expanded color mapping for game server states
         colors = {
-            "INFO": ANSI.CYAN,
-            "ERROR": ANSI.RED,
-            "WARN": ANSI.YELLOW,
-            "SUCCESS": ANSI.GREEN,
+            "TRACE":    ANSI.WHITE,        # Raw data/Packets
+            "DEBUG":    ANSI.MAGENTA,      # Logic flow
+            "INFO":     ANSI.CYAN,         # General status
+            "SUCCESS":  ANSI.GREEN,        # Connections/Handshakes
+            "NOTICE":   ANSI.BRIGHT_BLUE,  # Significant events (e.g., player joined)
+            "WARN":     ANSI.YELLOW,       # Timeouts/Retries
+            "ERROR":    ANSI.RED,          # Socket failures
+            "CRITICAL": ANSI.BRIGHT_RED,   # Server crash/Bind failures
         }
-        color = colors.get(level, "")
-        full_msg = f"[{timestamp}] {level}: {message}"
+        
+        color = colors.get(level.upper(), "")
+        full_msg = f"[{timestamp}] {level.upper()}: {message}"
         
         print(f"{color}{full_msg}{ANSI.RESET}")
         console.save_to_file(full_msg)
@@ -99,11 +122,11 @@ class console():
     @staticmethod
     def ask(prompt: str) -> str:
         """
-        Displays a styled prompt and returns the user's string input.
+        Prompts for user input with formatting and logs the interaction.
         Args:
-            prompt (str): The question or instruction for the user.
+            prompt (str): The question to display to the user.
         Returns:
-            str: The user's input.
+            str: The user's input string.
         """
         res = input(ANSI.wrap(prompt + " > ", ANSI.BLUE, ANSI.BOLD))
         console.save_to_file(f"[INPUT] {prompt} > {res}")
@@ -112,11 +135,11 @@ class console():
     @staticmethod
     def confirm(prompt: str) -> bool:
         """
-        Prompts the user for a yes/no confirmation.
+        Prompts for a yes/no confirmation and returns a boolean.
         Args:
-            prompt (str): The message to confirm.
+            prompt (str): The confirmation message.
         Returns:
-            bool: True if user inputs 'y' or 'yes', False otherwise.
+            bool: True if user enters 'y' or 'yes', False otherwise.
         """
         res = input(ANSI.wrap(f"{prompt} (y/n): ", ANSI.YELLOW)).lower()
         is_confirmed = res in ("y", "yes")
@@ -126,11 +149,11 @@ class console():
     @staticmethod
     def spinner(stop_event, text="Loading...", delay=0.1):
         """
-        Displays a visual terminal spinner on a single line until an event is set.
+        Displays an animated text spinner until the stop_event is set.
         Args:
-            stop_event (threading.Event): The signal to stop the spinner.
+            stop_event (threading.Event): Event used to signal termination.
             text (str): Text to display alongside the spinner.
-            delay (float): Seconds between frame updates.
+            delay (float): Seconds to wait between frame updates.
         """
         for char in itertools.cycle("|/-\\"):
             if stop_event.is_set():
@@ -139,6 +162,3 @@ class console():
             sys.stdout.flush()
             time.sleep(delay)
         print("\r" + " " * (len(text) + 2), end="\r")
-
-if __name__ == "__main__":
-    console.log("INFO", f"Logs will save relative to the launcher: {console.LOG_DIR}")

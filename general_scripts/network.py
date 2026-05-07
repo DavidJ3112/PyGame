@@ -341,7 +341,7 @@ class GameClient:
                 break
 
     @staticmethod
-    def Discover_Server(port=5001, timeout=5.0):
+    def Discover_Server(port=6000, timeout=5.0):
         """
         Listens for a UDP server discovery beacon.
         Args:

@@ -1,4 +1,5 @@
-import os, sys
+import os
+import sys
 import threading
 import pygame
 import socket
@@ -13,7 +14,8 @@ from general_scripts.network import GameServer, GameClient
 from general_scripts.Helpers import console
 from general_scripts.ANSI import ANSI
 
-console.set_max_logs(count= 50)
+console.set_max_logs(count=25)
+
 
 class MyServer(GameServer):
     def __init__(self, address, game_id, version, game_logic=None):
@@ -31,20 +33,21 @@ class MyServer(GameServer):
 
         conn = self.Get_Conn(gid)
 
-        self.Send(conn, {
-            "type": "assignment",
-            "symbol": symbol
-        })
+        self.Send(conn, {"type": "assignment", "symbol": symbol})
 
         self.Broadcast({"type": "player_joined", "gid": gid}, exclude=conn)
 
     def On_Message(self, gid, conn, data):
         if data.get("type") == "player_move":
-            console.log("INFO",f"{gid = }  {data = }")
+            ## console.log("INFO", f"{gid = }  {data = }")
             assert self.game_instance is not None
             result, winner = self.game_instance.process_move(gid, data)
-            if result:
-                self.Broadcast({"type": "MSG", "MSG": f"Player {gid}, made vaild move {result}"})
+            if result == True:
+                self.Broadcast(
+                    {"type": "MSG", "MSG": f"Player {gid}, made vaild move {result}"}
+                )
+            elif result == {"type":"MSG","MSG":"No Vaild Moves Posible"}:
+                self.Broadcast({"type":"MSG","MSG":"No Vaild Moves Posible"})
             if winner:
                 self.Broadcast({"type": "Win", "Winner": winner})
 
@@ -68,15 +71,15 @@ class MyClient(GameClient):
         self._conn.settimeout(5.0)
         try:
             self._conn.connect(self.address)
-            
+
             handshake = {"type": "handshake", "session_id": self.session_id}
-            self.Send(handshake) 
-            
+            self.Send(handshake)
+
             if start_loop:
                 threading.Thread(target=self._Receive_Loop, daemon=True).start()
                 threading.Thread(target=self._Heartbeat_Loop, daemon=True).start()
         except Exception as e:
-            raise e 
+            raise e
 
     def On_Ready(self):
         console.log("SUCCESS", f"Joined the game! My GID is {self.gid}")
@@ -93,29 +96,32 @@ class MyClient(GameClient):
 
         if data.get("type") == "Win":
             console.log("INFO", data["Winner"])
-            
+
         if data.get("type") == "board_update":
             if self.game_ref:
                 self.game_ref.current_board = data["board"]
 
     def _Receive_Loop(self):
-        if self._conn is None: return
+        if self._conn is None:
+            return
         try:
             while True:
                 part = self._conn.recv(1024)
-                if not part: break 
-                
+                if not part:
+                    break
+
                 self._buffer += part.decode()
                 while "\n" in self._buffer:
                     msg, self._buffer = self._buffer.split("\n", 1)
-                    if not msg.strip(): continue
+                    if not msg.strip():
+                        continue
                     try:
                         data = json.loads(msg)
-                        
+
                         if data.get("type") == "error":
                             console.log("ERROR", f"REJECTED: {data.get('message')}")
                             self.gid = "REJECTED"
-                            return 
+                            return
 
                         if data.get("type") == "welcome":
                             self.gid = data["gid"]
@@ -125,8 +131,9 @@ class MyClient(GameClient):
                             self.On_Ready()
                         else:
                             self.On_Message(data)
-                    except json.JSONDecodeError: continue
-        except Exception: 
+                    except json.JSONDecodeError:
+                        continue
+        except Exception:
             pass
         finally:
             if self.gid != "REJECTED":
@@ -136,45 +143,50 @@ class MyClient(GameClient):
         if self.gid == "REJECTED":
             return
 
-        if self.is_reconnecting: return
+        if self.is_reconnecting:
+            return
         self.is_reconnecting = True
-        
+
         console.log("ERROR", "Lost connection! Attempting to reconnect...")
-        
+
         attempts = 0
-        max_attempts = 10 
-        
+        max_attempts = 10
+
         while attempts < max_attempts:
             try:
                 console.log("INFO", f"Reconnect attempt {attempts + 1}...")
-                
-                self.gid = None 
+
+                self.gid = None
                 self.Connect()
-                
+
                 self.Wait_Until_Ready(timeout=3.0)
 
                 if self.gid == "REJECTED":
                     console.log("WARN", "Server is full. Aborting reconnection.")
-                    break # Kill the loop
-                
+                    break  # Kill the loop
+
                 if self.gid is not None:
-                    console.log("SUCCESS", f"Re-established connection! GID: {self.gid}")
+                    console.log(
+                        "SUCCESS", f"Re-established connection! GID: {self.gid}"
+                    )
                     self.is_reconnecting = False
                     return
-                
+
             except Exception as e:
-                console.log("WARN", f"Attempt {attempts+1} failed: {e}")
-            
+                console.log("WARN", f"Attempt {attempts + 1} failed: {e}")
+
             attempts += 1
             time.sleep(2)
-            
+
         console.log("ERROR", "Recovery failed. Exiting.")
         if self.game_ref:
             self.game_ref.running = False
 
+
 #!# --- Game Loops ---
 
-class ServerGame():
+
+class ServerGame:
     def __init__(self, server_instance) -> None:
         self.Clock = pygame.time.Clock()
         self.server = server_instance
@@ -199,7 +211,7 @@ class ServerGame():
     def Loop(self):
         console.log("INFO", "Game Logic Loop Started.")
         self.construct_board()
-        
+
         while self.running:
             self.Clock.tick(self.FPS)
 
@@ -212,10 +224,10 @@ class ServerGame():
         n = len(board)
 
         directions = [
-            (0, 1),   # horizontal
-            (1, 0),   # vertical
-            (1, 1),   # diagonal down-right
-            (1, -1)   # diagonal down-left
+            (0, 1),  # horizontal
+            (1, 0),  # vertical
+            (1, 1),  # diagonal down-right
+            (1, -1),  # diagonal down-left
         ]
 
         for dr, dc in directions:
@@ -239,48 +251,54 @@ class ServerGame():
                 return True
 
         return False
-        
 
     def process_move(self, gid, data):
         row = data["click_row"]
         col = data["click_col"]
         symbol = data["symbol"]
 
-        if self.turn == symbol:
-            if self.board[row][col] == "":
-                self.board[row][col] = symbol
-                if symbol == "x": self.turn = "o"
-                if symbol == "o": self.turn = "x"
+        if any("" in row for row in self.board):
+            if self.turn == symbol:
+                if self.board[row][col] == "":
+                    self.board[row][col] = symbol
+                    if symbol == "x":
+                        self.turn = "o"
+                    if symbol == "o":
+                        self.turn = "x"
 
+                    console.log("SUCCESS", f"Move accepted: {symbol} at ({row}, {col})")
+                    if self.check_winstate(row, col, symbol, self.win_length):
+                        console.log("INFO", f"{symbol} wins the game!")
+                        self.construct_board()
+                        msg = f"{symbol} wins the game!"
+                        return ({row}, {col}), msg
 
-                console.log("SUCCESS", f"Move accepted: {symbol} at ({row}, {col})")
-                if self.check_winstate(row, col, symbol, self.win_length):
-                    console.log("INFO", f"{symbol} wins the game!")
-                    self.construct_board()
-                    msg = f"{symbol} wins the game!"
-                    return ({row}, {col}), msg
-                return ({row}, {col}), None
-            
+                    return ({row}, {col}), None
+
             console.log("WARN", f"Invalid move attempted by {gid}")
+        else:
+            console.log("INFO","No Vaild moves posible, reseting the board")
+            self.construct_board()
+            return ({"type":"MSG","MSG":"No Vaild Moves Posible"}), False
 
         console.log("WARN", f"Early move attempted by {gid}")
         return False, None
 
-class PlayerGame():
+
+class PlayerGame:
     def __init__(self, client_instance) -> None:
         pygame.init()
         self.running = True
         self.client = client_instance
         self.client.game_ref = self
         self.current_board = None
-        
+
         self.screen = pygame.display.set_mode((640, 640))
         self.Clock = pygame.time.Clock()
         self.BGC = (25, 25, 25)
         self.FPS = 24
         self.board_update = False
 
-        
         self.current_board = [
             ["", "", ""],
             ["", "", ""],
@@ -305,10 +323,10 @@ class PlayerGame():
                 self.running = False
 
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_p: #!^ P for Panic
+                if event.key == pygame.K_p:  #!^ P for Panic
                     console.log("WARN", "SIMULATING CRASH: Dropping socket...")
-                    self.client._conn.close() #!^ Force close without telling the server
-            
+                    self.client._conn.close()  #!^ Force close without telling the server
+
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
                     if self.current_board and hasattr(self.client, "symbol"):
@@ -320,14 +338,15 @@ class PlayerGame():
                         self.col = mouse_x // cw
                         self.row = mouse_y // ch
 
-                    self.client.Send({
-                        "type": "player_move", 
-                        "GID": self.client.gid, 
-                        "symbol": self.client.symbol, 
-                        "click_col": self.col, 
-                        "click_row": self.row
-                    })
-
+                    self.client.Send(
+                        {
+                            "type": "player_move",
+                            "GID": self.client.gid,
+                            "symbol": self.client.symbol,
+                            "click_col": self.col,
+                            "click_row": self.row,
+                        }
+                    )
 
     def Draw_Board(self, board):
         if self.client.is_reconnecting:
@@ -341,19 +360,33 @@ class PlayerGame():
 
         for r in range(rows):
             for c in range(cols):
-                rect = pygame.Rect(c*cw, r*ch, cw, ch)
-                pygame.draw.rect(self.screen, (200,200,200), rect, 1)
+                rect = pygame.Rect(c * cw, r * ch, cw, ch)
+                pygame.draw.rect(self.screen, (200, 200, 200), rect, 1)
                 val = board[r][c]
-                center = (c*cw + cw//2, r*ch + ch//2)
+                center = (c * cw + cw // 2, r * ch + ch // 2)
                 if val == "x":
                     pad = cw // 4
-                    pygame.draw.line(self.screen, (255,0,0), (c*cw+pad, r*ch+pad), (c*cw+cw-pad, r*ch+ch-pad), 3)
-                    pygame.draw.line(self.screen, (255,0,0), (c*cw+cw-pad, r*ch+pad), (c*cw+pad, r*ch+ch-pad), 3)
+                    pygame.draw.line(
+                        self.screen,
+                        (255, 0, 0),
+                        (c * cw + pad, r * ch + pad),
+                        (c * cw + cw - pad, r * ch + ch - pad),
+                        3,
+                    )
+                    pygame.draw.line(
+                        self.screen,
+                        (255, 0, 0),
+                        (c * cw + cw - pad, r * ch + pad),
+                        (c * cw + pad, r * ch + ch - pad),
+                        3,
+                    )
                 elif val == "o":
-                    pygame.draw.circle(self.screen, (0,0,255), center, cw//3, 3)
+                    pygame.draw.circle(self.screen, (0, 0, 255), center, cw // 3, 3)
         pygame.display.flip()
 
+
 #!# --- Execution ---
+
 
 def Run_Server(ip, port):
     addr = (ip, port)
@@ -364,9 +397,12 @@ def Run_Server(ip, port):
 
     console.log("INFO", f"Starting server discovery beacon...")
     threading.Thread(target=server._Start_Discovery_Beacon, daemon=True).start()
-    threading.Thread(target=server.Start, kwargs={"max_players": 2}, daemon=True).start()
-    
+    threading.Thread(
+        target=server.Start, kwargs={"max_players": 2}, daemon=True
+    ).start()
+
     game.Loop()
+
 
 def Run_Client(ip, port):
     addr = (ip, port)
@@ -379,19 +415,20 @@ def Run_Client(ip, port):
         return
 
     client.Wait_Until_Ready(timeout=3.0)
-    
+
     #!^ Check the GID immediately after waiting
     if client.gid == "REJECTED":
         console.log("ERROR", "Connection failed: Server is full.")
         return
-    
+
     if client.gid is None:
         console.log("ERROR", "Handshake timeout.")
         return
-    
+
     game = PlayerGame(client)
     game.Loop()
     client.Disconnect()
+
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:

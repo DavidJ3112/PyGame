@@ -1,4 +1,0 @@
-[INPUT] Enter Port [Default 5000] > 
-[2026-05-05 23:00:01] INFO: Connecting to 10.19.12.127:5000...
-[2026-05-05 23:00:01] ERROR: REJECTED: Version Mismatch (Expected 1.0)
-[2026-05-05 23:00:01] ERROR: Connection failed: Server is full.
