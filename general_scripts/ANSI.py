@@ -61,39 +61,39 @@ class ANSI:
     BG_BRIGHT_WHITE   = "\033[107m"
 
     #!^ ── Cursor movement ────────────────────────────────────────────────────
-    CURSOR_UP           = "\033[A"      # Move up 1 line
-    CURSOR_DOWN         = "\033[B"      # Move down 1 line
-    CURSOR_RIGHT        = "\033[C"      # Move right 1 column
-    CURSOR_LEFT         = "\033[D"      # Move left 1 column
-    CURSOR_HOME         = "\033[H"      # Move to top-left (0, 0)
-    CURSOR_LINE_START   = "\033[G"      # Move to start of current line (col 1)
-    CURSOR_LINE_END     = "\033[999C"   # Move to end of current line (far right)
-    CURSOR_SAVE         = "\033[s"      # Save cursor position
-    CURSOR_RESTORE      = "\033[u"      # Restore saved cursor position
-    CURSOR_HIDE         = "\033[?25l"   # Hide the cursor
-    CURSOR_SHOW         = "\033[?25h"   # Show the cursor
+    CURSOR_UP           = "\033[A"      ## Move up 1 line
+    CURSOR_DOWN         = "\033[B"      ## Move down 1 line
+    CURSOR_RIGHT        = "\033[C"      ## Move right 1 column
+    CURSOR_LEFT         = "\033[D"      ## Move left 1 column
+    CURSOR_HOME         = "\033[H"      ## Move to top-left (0, 0)
+    CURSOR_LINE_START   = "\033[G"      ## Move to start of current line (col 1)
+    CURSOR_LINE_END     = "\033[999C"   ## Move to end of current line (far right)
+    CURSOR_SAVE         = "\033[s"      ## Save cursor position
+    CURSOR_RESTORE      = "\033[u"      ## Restore saved cursor position
+    CURSOR_HIDE         = "\033[?25l"   ## Hide the cursor
+    CURSOR_SHOW         = "\033[?25h"   ## Show the cursor
 
     #!^ ── Line control ───────────────────────────────────────────────────────
-    LINE_UP             = "\033[F"  # Move to start of previous line
-    LINE_DOWN           = "\033[E"  # Move to start of next line
-    ERASE_LINE          = "\033[2K" # Erase entire current line
-    ERASE_LINE_END      = "\033[0K" # Erase from cursor to end of line
-    ERASE_LINE_START    = "\033[1K" # Erase from cursor to start of line
-    CARRIAGE_RETURN     = "\r"      # Move to start of current line (no erase)
+    LINE_UP             = "\033[F"  ## Move to start of previous line
+    LINE_DOWN           = "\033[E"  ## Move to start of next line
+    ERASE_LINE          = "\033[2K" ## Erase entire current line
+    ERASE_LINE_END      = "\033[0K" ## Erase from cursor to end of line
+    ERASE_LINE_START    = "\033[1K" ## Erase from cursor to start of line
+    CARRIAGE_RETURN     = "\r"      ## Move to start of current line (no erase)
 
     #!^ ── Screen control ─────────────────────────────────────────────────────
-    CLEAR_SCREEN        = "\033[2J"     # Clear entire screen
-    CLEAR_SCREEN_END    = "\033[0J"     # Clear from cursor to end of screen
-    CLEAR_SCREEN_START  = "\033[1J"     # Clear from cursor to start of screen
-    CLEAR_SCROLLBACK    = "\033[3J"     # Clear screen + scrollback buffer
-    SCREEN_SAVE         = "\033[?47h"   # Save screen state
-    SCREEN_RESTORE      = "\033[?47l"   # Restore saved screen state
-    ALT_SCREEN_ON       = "\033[?1049h" # Switch to alternate screen buffer
-    ALT_SCREEN_OFF      = "\033[?1049l" # Switch back from alternate screen buffer
+    CLEAR_SCREEN        = "\033[2J"     ## Clear entire screen
+    CLEAR_SCREEN_END    = "\033[0J"     ## Clear from cursor to end of screen
+    CLEAR_SCREEN_START  = "\033[1J"     ## Clear from cursor to start of screen
+    CLEAR_SCROLLBACK    = "\033[3J"     ## Clear screen + scrollback buffer
+    SCREEN_SAVE         = "\033[?47h"   ## Save screen state
+    SCREEN_RESTORE      = "\033[?47l"   ## Restore saved screen state
+    ALT_SCREEN_ON       = "\033[?1049h" ## Switch to alternate screen buffer
+    ALT_SCREEN_OFF      = "\033[?1049l" ## Switch back from alternate screen buffer
 
     #!^ ── Scrolling ──────────────────────────────────────────────────────────
-    SCROLL_UP           = "\033[S"  # Scroll viewport up 1 line
-    SCROLL_DOWN         = "\033[T"  # Scroll viewport down 1 line
+    SCROLL_UP           = "\033[S"  ## Scroll viewport up 1 line
+    SCROLL_DOWN         = "\033[T"  ## Scroll viewport down 1 line
 
     #!^ ── Dynamic cursor helpers ─────────────────────────────────────────────
     @staticmethod
@@ -215,14 +215,14 @@ if __name__ == "__main__":
 
     print(ANSI.SAPERATOR)
 
-    # Line overwrite demo
+    ## Line overwrite demo
     print("Thinking...", end="", flush=True)
     time.sleep(1)
     print(ANSI.overwrite("Done!"))
 
-    # Overwrite a previous line demo
+    ## Overwrite a previous line demo
     print("Step 1: pending")
     print("Step 2: pending")
     time.sleep(1)
     print(ANSI.overwrite_above(ANSI.wrap("Step 1: complete", ANSI.GREEN), n=2), end="")
-    print(ANSI.line_down(1), end="")  # restore position to step 2's line
+    print(ANSI.line_down(1), end="")  ## restore position to step 2's line
