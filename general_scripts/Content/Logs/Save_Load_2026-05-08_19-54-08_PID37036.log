@@ -1,0 +1,7 @@
+[CONFIRM] Save file 'HeroData_5.json' already exists. Overwrite? ()
+[2026-05-08 19:54:08] INFO: Save aborted by user.
+[CONFIRM] Save file 'HeroData_4.json' already exists. Overwrite? ()
+[2026-05-08 19:54:09] INFO: Save aborted by user.
+[2026-05-08 19:54:09] SUCCESS: Loaded data from HeroData_4.json
+[2026-05-08 19:54:09] SUCCESS: Data saved to Config.json
+[2026-05-08 19:54:09] SUCCESS: Loaded data from Config.json
