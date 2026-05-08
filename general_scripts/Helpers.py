@@ -4,7 +4,6 @@ import time
 import sys
 import os
 import re
-import threading
 
 try:
     from ANSI import ANSI
@@ -101,16 +100,15 @@ class console():
         """
         timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         
-        # Expanded color mapping for game server states
         colors = {
-            "TRACE":    ANSI.WHITE,        # Raw data/Packets
-            "DEBUG":    ANSI.MAGENTA,      # Logic flow
-            "INFO":     ANSI.CYAN,         # General status
-            "SUCCESS":  ANSI.GREEN,        # Connections/Handshakes
-            "NOTICE":   ANSI.BRIGHT_BLUE,  # Significant events (e.g., player joined)
-            "WARN":     ANSI.YELLOW,       # Timeouts/Retries
-            "ERROR":    ANSI.RED,          # Socket failures
-            "CRITICAL": ANSI.BRIGHT_RED,   # Server crash/Bind failures
+            "TRACE":    ANSI.WHITE,        ## Raw data/Packets
+            "DEBUG":    ANSI.MAGENTA,      ## Logic flow
+            "INFO":     ANSI.CYAN,         ## General status
+            "SUCCESS":  ANSI.GREEN,        ## Connections/Handshakes
+            "NOTICE":   ANSI.BRIGHT_BLUE,  ## Significant events (e.g., player joined)
+            "WARN":     ANSI.YELLOW,       ## Timeouts/Retries
+            "ERROR":    ANSI.RED,          ## Socket failures
+            "CRITICAL": ANSI.BRIGHT_RED,   ## Server crash/Bind failures
         }
         
         color = colors.get(level.upper(), "")

@@ -99,24 +99,39 @@ class SaveLoad:
             return None
 
     @staticmethod
-    def get_save_path(slot=1, name: str="") -> str:
+    def get_save_path(slot=0, name: str="Save", type = "save") -> str:
         """
         Generates an absolute path for a specific save slot.
         Args:
             slot (int/str): The save slot identifier.
             name (str): The name prefix of the save.
+            type (str): The type.
         Returns:
             str: The full path to the slot's JSON file.
         """
+        
         base_dir = os.path.dirname(os.path.abspath(sys.argv[0]))
-        prefix = name if name != "" else "Save"
-        return os.path.join(base_dir, "Content", "Saves", f"{prefix}_{slot}.json")
 
-def my_pygame_popup(message):
-    return console.confirm("Over Write")
+        try:
+            if slot != 0:
+                return os.path.join(base_dir, "Content", type.capitalize(), f"{name}_{slot}.json")
+            else:
+                return os.path.join(base_dir, "Content", type.capitalize(), f"{name}.json")
+                
+
+        except Exception as e:
+            raise SyntaxError(e)
+
 
 if __name__ == "__main__":
-    path = SaveLoad.get_save_path(1, "HeroData")
+    def my_pygame_popup(message):
+        return console.confirm(message)
+    
+    path = SaveLoad.get_save_path(5, "HeroData")
     data = {"hp": 100, "gold": 50}
 
     SaveLoad.safe_save(path, data, callback=my_pygame_popup)
+    
+    config = {"volume": 50}
+    path = SaveLoad.get_save_path(0, "Config", "Config")
+    SaveLoad.save(path, config, log=True)
