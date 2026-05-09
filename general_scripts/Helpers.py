@@ -131,6 +131,13 @@ class console():
         return res
 
     @staticmethod
+    def header(message: str) -> None:
+        print(f"{ANSI.CYAN}{ANSI.SAPERATOR}{ANSI.RESET}")
+        print(f"{ANSI.CYAN}{message}{ANSI.RESET}")
+        print(f"{ANSI.CYAN}{ANSI.SAPERATOR}{ANSI.RESET}")
+        console.save_to_file(f"[HEADER] {message}")
+
+    @staticmethod
     def confirm(prompt: str) -> bool:
         """
         Prompts for a yes/no confirmation and returns a boolean.

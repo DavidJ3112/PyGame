@@ -12,7 +12,6 @@ sys.path.append(parent_dir)
 
 from general_scripts.network import GameServer, GameClient
 from general_scripts.Helpers import console
-from general_scripts.ANSI import ANSI
 
 console.set_max_logs(count=25)
 
