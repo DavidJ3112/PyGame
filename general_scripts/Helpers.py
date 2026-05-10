@@ -91,17 +91,21 @@ class console():
         except Exception: pass
 
     @staticmethod
-    def log(level, message):
+    def log(level, message, time_stamp = True, write_level = True):
         """
         Prints a timestamped, color-coded message to console and saves to log.
         Args:
             level (str): Log severity (TRACE, DEBUG, INFO, SUCCESS, NOTICE, WARN, ERROR, CRITICAL).
             message (str): The message content to log.
+
+            time_stamp (bool): If True, prepends the current timestamp to the message.
+            write_level (bool): If True, includes the log level label in the output.
         """
+
         timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         
         colors = {
-            "TRACE":    ANSI.WHITE,        ## Raw data/Packets
+            "TRACE":    ANSI.YELLOW,       ## Raw data/Packets
             "DEBUG":    ANSI.MAGENTA,      ## Logic flow
             "INFO":     ANSI.CYAN,         ## General status
             "SUCCESS":  ANSI.GREEN,        ## Connections/Handshakes
@@ -112,9 +116,21 @@ class console():
         }
         
         color = colors.get(level.upper(), "")
-        full_msg = f"[{timestamp}] {level.upper()}: {message}"
+        
+        if time_stamp:
+            if write_level:
+                full_msg = f"[{timestamp}] {level.upper()}: {message}"
+            else:
+                full_msg = f"[{timestamp}]: {message}"
+        else:
+            if write_level:
+                full_msg = f"{level.upper()}: {message}"
+            else:
+                full_msg = f"{message}"
         
         print(f"{color}{full_msg}{ANSI.RESET}")
+        
+        full_msg = f"[{timestamp}] {level.upper()}: {message}"
         console.save_to_file(full_msg)
 
     @staticmethod
@@ -126,8 +142,10 @@ class console():
         Returns:
             str: The user's input string.
         """
-        res = input(ANSI.wrap(prompt + " > ", ANSI.BLUE, ANSI.BOLD))
-        console.save_to_file(f"[INPUT] {prompt} > {res}")
+
+        res = input(ANSI.wrap(prompt + " > ", ANSI.BRIGHT_CYAN, ANSI.BOLD))
+        timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        console.save_to_file(f"[{timestamp}] INPUT: {prompt} > {res}")
         return res
 
     @staticmethod
@@ -135,7 +153,9 @@ class console():
         print(f"{ANSI.CYAN}{ANSI.SAPERATOR}{ANSI.RESET}")
         print(f"{ANSI.CYAN}{message}{ANSI.RESET}")
         print(f"{ANSI.CYAN}{ANSI.SAPERATOR}{ANSI.RESET}")
-        console.save_to_file(f"[HEADER] {message}")
+
+        timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        console.save_to_file(f"[{timestamp}] HEADER: {message}")
 
     @staticmethod
     def confirm(prompt: str) -> bool:
@@ -148,7 +168,9 @@ class console():
         """
         res = input(ANSI.wrap(f"{prompt} (y/n): ", ANSI.YELLOW)).lower()
         is_confirmed = res in ("y", "yes")
-        console.save_to_file(f"[CONFIRM] {prompt} ({res})")
+
+        timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        console.save_to_file(f"[{timestamp}] CONFIRM: {prompt} ({res})")
         return is_confirmed
 
     @staticmethod

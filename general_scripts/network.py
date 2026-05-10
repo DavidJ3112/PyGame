@@ -102,9 +102,9 @@ class GameServer:
         ips = list(set([info[4][0] for info in addr_info]))
         if "127.0.0.1" not in ips: ips.append("127.0.0.1")
 
-        print(f"\n{ANSI.CYAN}{ANSI.BOLD}--- Available Network Interfaces ---{ANSI.RESET}")
+        console.log("NOTICE", "--- Available Network Interfaces ---", False, False)
         for i, ip in enumerate(ips):
-            print(f"{ANSI.WHITE}{i + 1}. {ip}{ANSI.RESET}")
+            console.log("NOTICE", f"{i + 1}. {ip}", False, False)
 
         while True:
             selection = console.ask(f"Select IP (1-{len(ips)}) [Default 1]").strip()
@@ -270,9 +270,7 @@ class GameServer:
         server.listen()
         server.settimeout(1.0)
         
-        print(f"{ANSI.BOLD}{ANSI.CYAN}{ANSI.SAPERATOR}{ANSI.RESET}")
-        console.log("SUCCESS", f"Server Listening on {self.address}")
-        print(f"{ANSI.BOLD}{ANSI.CYAN}{ANSI.SAPERATOR}{ANSI.RESET}")
+        console.header(f"Server Listening on {self.address}")
 
         try:
             while True:
