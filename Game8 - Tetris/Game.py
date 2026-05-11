@@ -3,10 +3,6 @@ import pygame
 import random
 import sys
 import os
-import datetime
-import itertools
-import time
-import re
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
 parent_dir = os.path.abspath(os.path.join(current_dir, ".."))
