@@ -70,7 +70,7 @@ class SaveLoad:
     def get_save_path(
         slot: Union[int, str] = 0,
         name: str = "Save",
-        folder_type: str = "save"
+        folder_type: str = "saves"
     ) -> str:
         """
         Constructs a path for save or config files.
@@ -251,7 +251,7 @@ if __name__ == "__main__":
     print(SaveLoad.load(path, game_key, encrypted=True, log=True))
 
     # -------- CONFIG (NOT ENCRYPTED) --------
-    config_path = SaveLoad.get_save_path(0, "Config", "Config")
+    config_path = SaveLoad.get_save_path(0, "Config", "Configs")
 
     SaveLoad.save(
         config_path,
