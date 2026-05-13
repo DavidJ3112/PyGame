@@ -322,9 +322,9 @@ class PlayerGame:
                 self.running = False
 
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_p:  #!^ P for Panic
+                if event.key == pygame.K_p:
                     console.log("WARN", "SIMULATING CRASH: Dropping socket...")
-                    self.client._conn.close()  #!^ Force close without telling the server
+                    self.client._conn.close()
 
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:

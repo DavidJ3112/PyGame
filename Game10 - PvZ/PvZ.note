@@ -1,0 +1,17 @@
+Game Loop vars:
+- sun_count
+- active_seeds
+- wave_progress
+- zombie_pos
+- zombie_count
+- 
+
+
+Main Loop vars:
+- statistics
+- coin_count
+- unlocked_seeds
+- current_level
+- upgrades
+
+

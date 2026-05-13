@@ -186,7 +186,7 @@ class SaveLoad:
     def load(
         save_file: str,
         key: Optional[bytes] = None,
-        encrypted: bool = True,
+        encrypted: bool = False,
         log: bool = False
     ) -> Optional[Any]:
         """
