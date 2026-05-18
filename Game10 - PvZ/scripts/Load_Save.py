@@ -11,9 +11,9 @@ class Load_Data:
         config_path = SaveLoad.get_save_path(name="config", folder_type="Configs")
         save_path = SaveLoad.get_save_path(name="save", folder_type="Saves")
         statistics_path = SaveLoad.get_save_path(name="statistics", folder_type="Saves")
-        self.config = SaveLoad.load(config_path, log=True)
-        self.save = SaveLoad.load(save_path, key=key, encrypted=False, log=True)
-        self.statistics = SaveLoad.load(statistics_path, key=key, encrypted=False, log=True)
+        self.config = SaveLoad.load(config_path, log=False)
+        self.save = SaveLoad.load(save_path, key=key, encrypted=False, log=False)
+        self.statistics = SaveLoad.load(statistics_path, key=key, encrypted=False, log=False)
 
     def LoadData(self, game):
         if self.statistics:
@@ -75,6 +75,6 @@ class Save_Data:
         save_path = SaveLoad.get_save_path(name="save", folder_type="Saves")
         statistics_path = SaveLoad.get_save_path(name="statistics", folder_type="Saves")
 
-        SaveLoad.save(config_path, config, log=True)
-        SaveLoad.save(save_path, save, key=key, encrypt=False, log=True)
-        SaveLoad.save(statistics_path, statistics, key=key, encrypt=False, log=True)
+        SaveLoad.save(config_path, config, log=False)
+        SaveLoad.save(save_path, save, key=key, encrypt=False, log=False)
+        SaveLoad.save(statistics_path, statistics, key=key, encrypt=False, log=False)

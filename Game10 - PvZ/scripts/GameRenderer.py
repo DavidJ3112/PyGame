@@ -4,7 +4,7 @@ parent_dir = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file
 sys.path.append(parent_dir)
 
 from init import *
-
+from .DataBases.Seeds import SeedArcive
 
 class Draw:
     @staticmethod
@@ -23,18 +23,19 @@ class Draw:
                 x = game.lawn_offset[0] + c * game.cell_size[0]
                 y = game.lawn_offset[1] + r * game.cell_size[1]
 
+                game.board_rects[(c, r)] = pygame.Rect(x, y, game.cell_size[0], game.cell_size[1])
+
                 base_color = None
 
-                if tile == "glitched":
-                    base_color = (157, 0, 255)
-                elif tile == "grass":
-                    base_color = (60, 180, 75)
-                elif tile == "water":
-                    base_color = (50, 120, 200)
-                elif tile == "roof":
-                    base_color = (164, 74, 74)
-                else:
-                    base_color = (120, 120, 120)
+                TILE_COLORS = {
+                    "grass": (60, 180, 75),
+                    "water": (50, 120, 200),
+                    "roof": (164, 74, 74),
+                    "glitched": (157, 0, 255),
+                    "empty": (120, 120, 120),
+                }
+
+                base_color = TILE_COLORS.get(tile, (120, 120, 120))
 
                 #!^ variation construction
                 if (c + r) % 2 == 0:
@@ -109,7 +110,7 @@ class Draw:
             pygame.draw.rect(game.screen, (30, 30, 30), (slot_x, slot_y, slot_w, slot_h), width=1, border_radius=3)
             
             if plant_id is not None:
-                plant_text = font.render(f"P{plant_id}", True, (255, 255, 255))
+                plant_text = font.render(f"{plant_id}", True, (255, 255, 255))
                 p_rect = plant_text.get_rect(center=(slot_x + slot_w // 2, slot_y + slot_h // 2))
                 game.screen.blit(plant_text, p_rect)
             else:
@@ -120,9 +121,93 @@ class Draw:
             game.seed_rects[key] = pygame.Rect(slot_x, slot_y, slot_w, slot_h)
 
     @staticmethod
+    def draw_seed_selector(game):
+        panel_x, panel_y = 40, 100
+        cols = 8
+        card_w, card_h = 55, 70
+        padding = 6
+        
+        seeds_dict = SeedArcive.get_all()
+        total_seeds = len(seeds_dict)
+        rows = (total_seeds + cols - 1) // cols
+
+        panel_w = (cols * (card_w + padding)) + padding
+        panel_h = (rows * (card_h + padding)) + padding + 30
+
+        if not hasattr(game, "selector_rects"):
+            game.selector_rects = {}
+        game.selector_rects.clear()
+
+        pygame.draw.rect(game.screen, (35, 25, 20), (panel_x, panel_y, panel_w, panel_h), border_radius=8)
+        pygame.draw.rect(game.screen, (75, 55, 40), (panel_x, panel_y, panel_w, panel_h), width=3, border_radius=8)
+
+        title_font = pygame.font.SysFont("Arial", 14, bold=True)
+        title_text = title_font.render("CHOOSE YOUR CARDS", True, (210, 180, 140))
+        game.screen.blit(title_text, (panel_x + padding + 2, panel_y + 8))
+
+        font_name = pygame.font.SysFont("Arial", 9, bold=True)
+        font_cost = pygame.font.SysFont("Arial", 11, bold=True)
+
+        start_grid_y = panel_y + 30
+
+        for i, (name, data) in enumerate(seeds_dict.items()):
+            c = i % cols
+            r = i // cols
+
+            cx = panel_x + padding + c * (card_w + padding)
+            cy = start_grid_y + r * (card_h + padding)
+
+            is_chosen = name in game.active_seeds.values()
+            is_upgrade = data["is_upgrade"]
+
+            if is_chosen:
+                bg_color = (40, 40, 40)
+                text_color = (100, 100, 100)
+                cost_color = (70, 70, 70)
+            elif is_upgrade:
+                bg_color = (90, 0, 130)
+                text_color = (255, 255, 255)
+                cost_color = (0, 0, 0)
+            elif name == "Imitater":
+                bg_color = (150, 150, 150)
+                text_color = (255, 255, 255)
+                cost_color = (0, 0, 0)
+            else:
+                bg_color = (139, 115, 85)
+                text_color = (255, 255, 255)
+                cost_color = (0, 0, 0)
+
+            card_rect = pygame.Rect(cx, cy, card_w, card_h)
+            pygame.draw.rect(game.screen, bg_color, card_rect, border_radius=4)
+            pygame.draw.rect(game.screen, (20, 20, 20), card_rect, width=1, border_radius=4)
+
+            game.selector_rects[name] = card_rect
+
+            display_name = name
+            if len(display_name) > 9:
+                display_name = display_name[:8] + "."
+            
+            name_surface = font_name.render(display_name, True, text_color)
+            name_rect = name_surface.get_rect(center=(cx + card_w // 2, cy + 18))
+            game.screen.blit(name_surface, name_rect)
+
+            cost_h = 16
+            cost_strip_y = (cy + card_h) - cost_h - 2
+            pygame.draw.rect(game.screen, (240, 230, 180) if not is_chosen else (60, 60, 60), 
+                             (cx + 2, cost_strip_y, card_w - 4, cost_h), border_radius=2)
+
+            cost_surface = font_cost.render(str(data["cost"]), True, cost_color)
+            cost_rect = cost_surface.get_rect(center=((cx + card_w // 2), cost_strip_y + (cost_h // 2)))
+            game.screen.blit(cost_surface, cost_rect)
+
+    @staticmethod
     def draw_zombies(game):
         pass
 
     @staticmethod
     def draw_plants(game):
         pass
+
+    @staticmethod
+    def draw_planting(game, selected_seed):
+        mx, my = pygame.mouse.get_pos()

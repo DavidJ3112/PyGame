@@ -11,6 +11,9 @@ class GameLevel:
         #!^ Temp Data Setup prevent pylance Crying
         self.lawn_offset, self.cell_size = {}, {}
         self.rows, self.cols = (None,None)
+        self.selector_rects = {}
+        self.board_rects = {}
+        self.planting_seed = None
 
         self.current_level = 1
         self.Clock = pygame.time.Clock()
@@ -19,13 +22,14 @@ class GameLevel:
         self.screen = screen
 
         self.running = True
+        self.Running_Level = False
 
         self.sun_count: int = 50
         self.wave_progress: float = 0
         self.zombie_count: int = 0
         self.zombie_pos: int = 0
         self.current_lawn: str = "normal"
-        self.planting: bool = True
+        self.planting: bool = False
         self.planting_location: tuple[int, int] = (-1, -1)
         self.seed_rects: dict[str, pygame.Rect] = {}
 
@@ -50,10 +54,17 @@ class GameLevel:
             if result:
                 return result
 
-            Draw.draw_lawn(self)
-            Draw.draw_plants(self)
-            Draw.draw_zombies(self)
             Draw.draw_SeedBar(self)
+
+            if self.Running_Level:
+                Draw.draw_lawn(self)
+                Draw.draw_plants(self)
+                Draw.draw_zombies(self)
+            else:
+                Draw.draw_seed_selector(self)
+
+            if self.planting:
+                Draw.draw_planting(self, self.planting_seed)
 
             pygame.display.flip()
 
@@ -70,13 +81,43 @@ class GameLevel:
 
                 if event.key == pygame.K_p:
                     self.planting = not self.planting
+
+                if event.key == pygame.K_F1:
+                    self.Running_Level = not self.Running_Level
             
             if event.type == pygame.MOUSEBUTTONDOWN:
                 mx, my = pygame.mouse.get_pos()
+                
+                if self.planting:
+                    for (x, y), rect in self.board_rects.items():
+                        if rect.collidepoint(mx ,my):
+                            print(x, y)
 
                 for slot, rect in self.seed_rects.items():
                     if rect.collidepoint(mx, my):
-                        print(slot)
+                        if self.Running_Level == False:
+                            values = list(self.active_seeds.values())
+                            index = int(slot.replace("seedslot", "")) - 1
+                            values.pop(index)
+                            values.append(None)
+                            for i in range(10):
+                                self.active_seeds[f"seedslot{i+1}"] = values[i]
+
+                        else:
+                            self.planting = True
+                            self.planting_seed = self.active_seeds[slot]
+                
+                if not self.Running_Level:
+                    for name, rect in self.selector_rects.items():
+                        if rect.collidepoint(mx, my):
+                            if name in self.active_seeds.values():
+                                break
+                            for slot, seed in self.active_seeds.items():
+                                if self.active_seeds[slot] is None and self.unlocked_slots.get(slot, False):
+                                    self.active_seeds[slot] = name
+                                    break
+                            break
+
 
             if self.planting:
                 mx, my = pygame.mouse.get_pos()
@@ -109,6 +150,8 @@ class GameMenu:
         self.config = {}
         self.save_data = {}
         self.statistics = {}
+
+        self.Seeds = SeedArcive.get_all()
 
         loader = Load_Data()
         loader.LoadData(self)

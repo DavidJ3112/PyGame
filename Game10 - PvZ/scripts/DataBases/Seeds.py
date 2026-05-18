@@ -10,6 +10,9 @@ from init import *
 
 class SeedArcive:
     seeds = {
+        # ==========================================
+        # STAGE 1: DAY
+        # ==========================================
         "Peashooter": {
             "cost": 100,
             "recharge_seconds": 7.5,
@@ -18,6 +21,7 @@ class SeedArcive:
             "aoe_range": 0.0,
             "type": "offensive",
             "is_mushroom": False,
+            "is_upgrade": False,
         },
         "Sunflower": {
             "cost": 50,
@@ -27,6 +31,7 @@ class SeedArcive:
             "aoe_range": 0.0,
             "type": "production",
             "is_mushroom": False,
+            "is_upgrade": False,
         },
         "Cherry Bomb": {
             "cost": 150,
@@ -36,6 +41,7 @@ class SeedArcive:
             "aoe_range": 3.0,
             "type": "explosive",
             "is_mushroom": False,
+            "is_upgrade": False,
         },
         "Wall-nut": {
             "cost": 50,
@@ -45,6 +51,7 @@ class SeedArcive:
             "aoe_range": 0.0,
             "type": "defensive",
             "is_mushroom": False,
+            "is_upgrade": False,
         },
         "Potato Mine": {
             "cost": 25,
@@ -54,6 +61,7 @@ class SeedArcive:
             "aoe_range": 1.0,
             "type": "explosive",
             "is_mushroom": False,
+            "is_upgrade": False,
         },
         "Snow Pea": {
             "cost": 175,
@@ -63,6 +71,7 @@ class SeedArcive:
             "aoe_range": 0.0,
             "type": "offensive",
             "is_mushroom": False,
+            "is_upgrade": False,
         },
         "Chomper": {
             "cost": 150,
@@ -72,6 +81,7 @@ class SeedArcive:
             "aoe_range": 0.0,
             "type": "offensive",
             "is_mushroom": False,
+            "is_upgrade": False,
         },
         "Repeater": {
             "cost": 200,
@@ -81,7 +91,12 @@ class SeedArcive:
             "aoe_range": 0.0,
             "type": "offensive",
             "is_mushroom": False,
+            "is_upgrade": False,
         },
+
+        # ==========================================
+        # STAGE 2: NIGHT
+        # ==========================================
         "Puff-shroom": {
             "cost": 0,
             "recharge_seconds": 7.5,
@@ -90,6 +105,7 @@ class SeedArcive:
             "aoe_range": 0.0,
             "type": "offensive",
             "is_mushroom": True,
+            "is_upgrade": False,
         },
         "Sun-shroom": {
             "cost": 25,
@@ -99,6 +115,7 @@ class SeedArcive:
             "aoe_range": 0.0,
             "type": "production",
             "is_mushroom": True,
+            "is_upgrade": False,
         },
         "Fume-shroom": {
             "cost": 75,
@@ -108,6 +125,7 @@ class SeedArcive:
             "aoe_range": 0.0,
             "type": "offensive",
             "is_mushroom": True,
+            "is_upgrade": False,
         },
         "Grave Buster": {
             "cost": 75,
@@ -117,6 +135,7 @@ class SeedArcive:
             "aoe_range": 0.0,
             "type": "environmental",
             "is_mushroom": False,
+            "is_upgrade": False,
         },
         "Hypno-shroom": {
             "cost": 75,
@@ -126,6 +145,7 @@ class SeedArcive:
             "aoe_range": 0.0,
             "type": "charm",
             "is_mushroom": True,
+            "is_upgrade": False,
         },
         "Scaredy-shroom": {
             "cost": 25,
@@ -135,6 +155,7 @@ class SeedArcive:
             "aoe_range": 0.0,
             "type": "offensive",
             "is_mushroom": True,
+            "is_upgrade": False,
         },
         "Ice-shroom": {
             "cost": 75,
@@ -144,6 +165,7 @@ class SeedArcive:
             "aoe_range": 9.0,
             "type": "offensive",
             "is_mushroom": True,
+            "is_upgrade": False,
         },
         "Doom-shroom": {
             "cost": 125,
@@ -153,7 +175,12 @@ class SeedArcive:
             "aoe_range": 7.0,
             "type": "explosive",
             "is_mushroom": True,
+            "is_upgrade": False,
         },
+
+        # ==========================================
+        # STAGE 3: POOL
+        # ==========================================
         "Lily Pad": {
             "cost": 25,
             "recharge_seconds": 7.5,
@@ -162,6 +189,7 @@ class SeedArcive:
             "aoe_range": 0.0,
             "type": "environmental",
             "is_mushroom": False,
+            "is_upgrade": False,
         },
         "Squash": {
             "cost": 50,
@@ -171,6 +199,7 @@ class SeedArcive:
             "aoe_range": 1.0,
             "type": "explosive",
             "is_mushroom": False,
+            "is_upgrade": False,
         },
         "Threepeater": {
             "cost": 325,
@@ -180,6 +209,7 @@ class SeedArcive:
             "aoe_range": 0.0,
             "type": "offensive",
             "is_mushroom": False,
+            "is_upgrade": False,
         },
         "Tangle Kelp": {
             "cost": 25,
@@ -189,6 +219,7 @@ class SeedArcive:
             "aoe_range": 0.0,
             "type": "explosive",
             "is_mushroom": False,
+            "is_upgrade": False,
         },
         "Jalapeno": {
             "cost": 125,
@@ -198,6 +229,7 @@ class SeedArcive:
             "aoe_range": 9.0,
             "type": "explosive",
             "is_mushroom": False,
+            "is_upgrade": False,
         },
         "Spikeweed": {
             "cost": 100,
@@ -207,6 +239,7 @@ class SeedArcive:
             "aoe_range": 0.0,
             "type": "offensive",
             "is_mushroom": False,
+            "is_upgrade": False,
         },
         "Torchwood": {
             "cost": 175,
@@ -216,6 +249,7 @@ class SeedArcive:
             "aoe_range": 0.0,
             "type": "buff",
             "is_mushroom": False,
+            "is_upgrade": False,
         },
         "Tall-nut": {
             "cost": 125,
@@ -225,7 +259,12 @@ class SeedArcive:
             "aoe_range": 0.0,
             "type": "defensive",
             "is_mushroom": False,
+            "is_upgrade": False,
         },
+
+        # ==========================================
+        # STAGE 4: FOG
+        # ==========================================
         "Sea-shroom": {
             "cost": 0,
             "recharge_seconds": 30.0,
@@ -234,6 +273,7 @@ class SeedArcive:
             "aoe_range": 0.0,
             "type": "offensive",
             "is_mushroom": True,
+            "is_upgrade": False,
         },
         "Plantern": {
             "cost": 25,
@@ -243,6 +283,7 @@ class SeedArcive:
             "aoe_range": 3.0,
             "type": "environmental",
             "is_mushroom": False,
+            "is_upgrade": False,
         },
         "Cactus": {
             "cost": 125,
@@ -252,6 +293,7 @@ class SeedArcive:
             "aoe_range": 0.0,
             "type": "offensive",
             "is_mushroom": False,
+            "is_upgrade": False,
         },
         "Blover": {
             "cost": 100,
@@ -261,6 +303,7 @@ class SeedArcive:
             "aoe_range": 9.0,
             "type": "environmental",
             "is_mushroom": False,
+            "is_upgrade": False,
         },
         "Split Pea": {
             "cost": 125,
@@ -270,6 +313,7 @@ class SeedArcive:
             "aoe_range": 0.0,
             "type": "offensive",
             "is_mushroom": False,
+            "is_upgrade": False,
         },
         "Starfruit": {
             "cost": 125,
@@ -279,6 +323,7 @@ class SeedArcive:
             "aoe_range": 0.0,
             "type": "offensive",
             "is_mushroom": False,
+            "is_upgrade": False,
         },
         "Pumpkin": {
             "cost": 125,
@@ -288,6 +333,7 @@ class SeedArcive:
             "aoe_range": 0.0,
             "type": "defensive",
             "is_mushroom": False,
+            "is_upgrade": False,
         },
         "Magnet-shroom": {
             "cost": 100,
@@ -297,7 +343,12 @@ class SeedArcive:
             "aoe_range": 3.5,
             "type": "disarm",
             "is_mushroom": True,
+            "is_upgrade": False,
         },
+
+        # ==========================================
+        # STAGE 5: ROOF
+        # ==========================================
         "Cabbage-pult": {
             "cost": 100,
             "recharge_seconds": 7.5,
@@ -306,6 +357,7 @@ class SeedArcive:
             "aoe_range": 0.0,
             "type": "offensive",
             "is_mushroom": False,
+            "is_upgrade": False,
         },
         "Flower Pot": {
             "cost": 25,
@@ -315,6 +367,7 @@ class SeedArcive:
             "aoe_range": 0.0,
             "type": "environmental",
             "is_mushroom": False,
+            "is_upgrade": False,
         },
         "Kernel-pult": {
             "cost": 100,
@@ -324,6 +377,7 @@ class SeedArcive:
             "aoe_range": 0.0,
             "type": "offensive",
             "is_mushroom": False,
+            "is_upgrade": False,
         },
         "Coffee Bean": {
             "cost": 75,
@@ -333,6 +387,7 @@ class SeedArcive:
             "aoe_range": 0.0,
             "type": "buff",
             "is_mushroom": False,
+            "is_upgrade": False,
         },
         "Garlic": {
             "cost": 50,
@@ -342,24 +397,7 @@ class SeedArcive:
             "aoe_range": 0.0,
             "type": "defensive",
             "is_mushroom": False,
-        },
-        "Marigold": {
-            "cost": 50,
-            "recharge_seconds": 30.0,
-            "toughness": 300,
-            "damage_per_hit": 0,
-            "aoe_range": 0.0,
-            "type": "production",
-            "is_mushroom": False,
-        },
-        "Melon-pult": {
-            "cost": 300,
-            "recharge_seconds": 7.5,
-            "toughness": 300,
-            "damage_per_hit": 80,
-            "aoe_range": 3.0,
-            "type": "offensive",
-            "is_mushroom": False,
+            "is_upgrade": False,
         },
         "Umbrella Leaf": {
             "cost": 50,
@@ -369,7 +407,32 @@ class SeedArcive:
             "aoe_range": 3.0,
             "type": "defensive",
             "is_mushroom": False,
+            "is_upgrade": False,
         },
+        "Marigold": {
+            "cost": 50,
+            "recharge_seconds": 30.0,
+            "toughness": 300,
+            "damage_per_hit": 0,
+            "aoe_range": 0.0,
+            "type": "production",
+            "is_mushroom": False,
+            "is_upgrade": False,
+        },
+        "Melon-pult": {
+            "cost": 300,
+            "recharge_seconds": 7.5,
+            "toughness": 300,
+            "damage_per_hit": 80,
+            "aoe_range": 3.0,
+            "type": "offensive",
+            "is_mushroom": False,
+            "is_upgrade": False,
+        },
+
+        # ==========================================
+        # CRAZY DAVE'S TWIDDYDINKIES (SHOP UPGRADES)
+        # ==========================================
         "Gatling Pea": {
             "cost": 250,
             "recharge_seconds": 50.0,
@@ -378,6 +441,7 @@ class SeedArcive:
             "aoe_range": 0.0,
             "type": "offensive",
             "is_mushroom": False,
+            "is_upgrade": True,
         },
         "Twin Sunflower": {
             "cost": 150,
@@ -387,6 +451,7 @@ class SeedArcive:
             "aoe_range": 0.0,
             "type": "production",
             "is_mushroom": False,
+            "is_upgrade": True,
         },
         "Gloom-shroom": {
             "cost": 150,
@@ -396,6 +461,7 @@ class SeedArcive:
             "aoe_range": 1.5,
             "type": "offensive",
             "is_mushroom": True,
+            "is_upgrade": True,
         },
         "Cattail": {
             "cost": 225,
@@ -405,6 +471,7 @@ class SeedArcive:
             "aoe_range": 9.0,
             "type": "offensive",
             "is_mushroom": False,
+            "is_upgrade": True,
         },
         "Winter Melon": {
             "cost": 200,
@@ -414,15 +481,17 @@ class SeedArcive:
             "aoe_range": 3.0,
             "type": "offensive",
             "is_mushroom": False,
+            "is_upgrade": True,
         },
         "Spikerock": {
             "cost": 125,
             "recharge_seconds": 50.0,
-            "toughness": 9,
+            "toughness": 300,
             "damage_per_hit": 22,
             "aoe_range": 0.0,
             "type": "offensive",
             "is_mushroom": False,
+            "is_upgrade": True,
         },
         "Cob Cannon": {
             "cost": 500,
@@ -432,6 +501,7 @@ class SeedArcive:
             "aoe_range": 3.0,
             "type": "explosive",
             "is_mushroom": False,
+            "is_upgrade": True,
         },
         "Imitater": {
             "cost": 0,
@@ -441,8 +511,10 @@ class SeedArcive:
             "aoe_range": 0.0,
             "type": "environmental",
             "is_mushroom": False,
+            "is_upgrade": False,
         },
     }
 
-    def get_all(self):
-        return self.seeds
+    @classmethod
+    def get_all(cls):
+        return cls.seeds
