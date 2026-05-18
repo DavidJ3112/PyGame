@@ -3,17 +3,18 @@ example_game.py  —  shows how to use network.py in a real game
 Run the server in one terminal, then the client in another.
 """
 
-from network import GameServer, GameClient
+from network import Network
 import threading
 import time
 
+GameServer = Network.GameServer
+GameClient = Network.GameClient
 
 #!^ ─────────────────────────────────────────────
 #!^  GAME SERVER
 #!^ ─────────────────────────────────────────────
 
 class MyGameServer(GameServer):
-
     def On_Connect(self, gid):
         #!^ tell everyone a new player joined
         self.Broadcast({"type": "player_joined", "gid": gid})

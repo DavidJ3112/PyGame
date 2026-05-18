@@ -6,14 +6,14 @@ parent_dir = os.path.abspath(os.path.join(current_dir, ".."))
 sys.path.append(parent_dir)
 
 from general_scripts.ANSI import ANSI
-from general_scripts.RPG.Enemy_Pool import all_enemy
+from general_scripts.RPG.Enemy_Pool import EnemyDataBase
 
 import random
 
 SOFT_CAP_LEVEL = 60
 LATE_GAME_DIVISOR = 4
 
-enemy_pool = all_enemy()
+enemy_pool = EnemyDataBase.all_enemy()
 
 def _scale_player_level(player_lvl: int) -> int:
     if player_lvl <= SOFT_CAP_LEVEL:

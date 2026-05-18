@@ -10,8 +10,11 @@ current_dir = os.path.dirname(os.path.abspath(__file__))
 parent_dir = os.path.abspath(os.path.join(current_dir, ".."))
 sys.path.append(parent_dir)
 
-from general_scripts.network import GameServer, GameClient
+from general_scripts.network import Network
 from general_scripts.Helpers import console
+
+GameServer = Network.GameServer
+GameClient = Network.GameClient
 
 console.set_max_logs(count=25)
 
