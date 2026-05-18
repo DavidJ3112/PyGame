@@ -134,17 +134,17 @@ class GameLevel:
             "seedslot9": None,
             "seedslot10": None,
         }
-#Todo Split up the main script in segments
+
     def ConstructBoard(self):
-        if 0 <= self.current_level <= 9:
+        if 1 <= self.current_level <= 10:
             self.current_lawn = "normal"
-        elif 10 <= self.current_level <= 19:
+        elif 11 <= self.current_level <= 20:
             self.current_lawn = "night"
-        elif 20 <= self.current_level <= 29: 
+        elif 21 <= self.current_level <= 30:
             self.current_lawn = "pool"
-        elif 30 <= self.current_level <= 39:
+        elif 31 <= self.current_level <= 40:
             self.current_lawn = "fog"
-        elif 40 <= self.current_level <= 49:
+        elif 41 <= self.current_level <= 50:
             self.current_lawn = "roof"
         else:
             self.current_lawn = "glitched"
