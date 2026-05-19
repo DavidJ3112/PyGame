@@ -1,15 +1,18 @@
 import sys, os
 
-parent_dir = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
+parent_dir = os.path.abspath(
+    os.path.join(os.path.dirname(os.path.abspath(__file__)), "..")
+)
 sys.path.append(parent_dir)
 
 from init import *
+
 
 class Configs:
     @staticmethod
     def Get_LawnConfigs():
         lawn_size: dict[str, tuple[int, int]] = {
-            "glitched": (5,9),
+            "glitched": (5, 9),
             "normal": (5, 9),
             "night": (5, 9),
             "pool": (6, 9),
@@ -25,7 +28,7 @@ class Configs:
                 "watered_tiles": ((3, 4), (5, 1)),
                 "tilted_rows": (0,),
                 "tilted_cols": (),
-                "tilted_tiles": ((3, 4), ),
+                "tilted_tiles": ((3, 4),),
                 "tile_skin": "glitched",
             },
             "normal": {
@@ -79,7 +82,7 @@ class Configs:
                 "tile_skin": "roof",
             },
         }
-    
+
         return lawn_size, lawn_properties
 
     @staticmethod

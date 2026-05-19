@@ -1,10 +1,13 @@
 import sys, os
 
-parent_dir = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
+parent_dir = os.path.abspath(
+    os.path.join(os.path.dirname(os.path.abspath(__file__)), "..")
+)
 sys.path.append(parent_dir)
 
 from init import *
 from .DataBases.Seeds import SeedArcive
+
 
 class Draw:
     @staticmethod
@@ -23,7 +26,9 @@ class Draw:
                 x = game.lawn_offset[0] + c * game.cell_size[0]
                 y = game.lawn_offset[1] + r * game.cell_size[1]
 
-                game.board_rects[(c, r)] = pygame.Rect(x, y, game.cell_size[0], game.cell_size[1])
+                game.board_rects[(c, r)] = pygame.Rect(
+                    x, y, game.cell_size[0], game.cell_size[1]
+                )
 
                 base_color = None
 
@@ -43,7 +48,7 @@ class Draw:
                 else:
                     color = tuple(Draw.clamp(v - 10) for v in base_color)
                     if tile == "glitched":
-                        color = (0,0,0)
+                        color = (0, 0, 0)
 
                 #!^ night mode
                 if night:
@@ -57,14 +62,14 @@ class Draw:
                     color,
                     pygame.Rect(x, y, game.cell_size[0], game.cell_size[1]),
                 )
-    
+
     @staticmethod
     def draw_SeedBar(game):
         bar_x, bar_y = 10, 10
         slot_w, slot_h = 50, 60
         padding = 5
         sun_box_w = 60
-        
+
         if isinstance(game.unlocked_slots, dict):
             slots_count = sum(1 for value in game.unlocked_slots.values() if value)
         else:
@@ -75,49 +80,82 @@ class Draw:
 
         total_width = sun_box_w + padding + (slots_count * (slot_w + padding)) + padding
         total_height = slot_h + (padding * 2)
-        
-        pygame.draw.rect(game.screen, (50, 40, 30), (bar_x, bar_y, total_width, total_height), border_radius=5)
-        pygame.draw.rect(game.screen, (100, 80, 60), (bar_x, bar_y, total_width, total_height), width=2, border_radius=5)
+
+        pygame.draw.rect(
+            game.screen,
+            (50, 40, 30),
+            (bar_x, bar_y, total_width, total_height),
+            border_radius=5,
+        )
+        pygame.draw.rect(
+            game.screen,
+            (100, 80, 60),
+            (bar_x, bar_y, total_width, total_height),
+            width=2,
+            border_radius=5,
+        )
 
         sun_box_x = bar_x + padding
         sun_box_y = bar_y + padding
-        pygame.draw.rect(game.screen, (220, 200, 150), (sun_box_x, sun_box_y, sun_box_w, slot_h), border_radius=3)
-        
+        pygame.draw.rect(
+            game.screen,
+            (220, 200, 150),
+            (sun_box_x, sun_box_y, sun_box_w, slot_h),
+            border_radius=3,
+        )
+
         font = pygame.font.SysFont("Arial", 16, bold=True)
         sun_text = font.render(str(game.sun_count), True, (0, 0, 0))
-        text_rect = sun_text.get_rect(center=(sun_box_x + sun_box_w // 2, sun_box_y + slot_h // 2))
+        text_rect = sun_text.get_rect(
+            center=(sun_box_x + sun_box_w // 2, sun_box_y + slot_h // 2)
+        )
         game.screen.blit(sun_text, text_rect)
 
         start_slots_x = sun_box_x + sun_box_w + padding
         slots_keys = [f"seedslot{i}" for i in range(1, slots_count + 1)]
-        
+
         game.seed_rects.clear()
 
         for i, key in enumerate(slots_keys):
             slot_x = start_slots_x + i * (slot_w + padding)
             slot_y = bar_y + padding
-            
+
             plant_id = game.active_seeds.get(key)
             if plant_id is not None:
                 slot_color = (139, 115, 85)
             else:
                 slot_color = (80, 80, 80)
-                
+
             if getattr(game, "selected_seed_slot", None) == key:
                 slot_color = (255, 215, 0)
-                
-            pygame.draw.rect(game.screen, slot_color, (slot_x, slot_y, slot_w, slot_h), border_radius=3)
-            pygame.draw.rect(game.screen, (30, 30, 30), (slot_x, slot_y, slot_w, slot_h), width=1, border_radius=3)
-            
+
+            pygame.draw.rect(
+                game.screen,
+                slot_color,
+                (slot_x, slot_y, slot_w, slot_h),
+                border_radius=3,
+            )
+            pygame.draw.rect(
+                game.screen,
+                (30, 30, 30),
+                (slot_x, slot_y, slot_w, slot_h),
+                width=1,
+                border_radius=3,
+            )
+
             if plant_id is not None:
                 plant_text = font.render(f"{plant_id}", True, (255, 255, 255))
-                p_rect = plant_text.get_rect(center=(slot_x + slot_w // 2, slot_y + slot_h // 2))
+                p_rect = plant_text.get_rect(
+                    center=(slot_x + slot_w // 2, slot_y + slot_h // 2)
+                )
                 game.screen.blit(plant_text, p_rect)
             else:
                 empty_text = font.render("-", True, (120, 120, 120))
-                e_rect = empty_text.get_rect(center=(slot_x + slot_w // 2, slot_y + slot_h // 2))
+                e_rect = empty_text.get_rect(
+                    center=(slot_x + slot_w // 2, slot_y + slot_h // 2)
+                )
                 game.screen.blit(empty_text, e_rect)
-                
+
             game.seed_rects[key] = pygame.Rect(slot_x, slot_y, slot_w, slot_h)
 
     @staticmethod
@@ -126,7 +164,7 @@ class Draw:
         cols = 8
         card_w, card_h = 55, 70
         padding = 6
-        
+
         seeds_dict = SeedArcive.get_all()
         total_seeds = len(seeds_dict)
         rows = (total_seeds + cols - 1) // cols
@@ -138,8 +176,19 @@ class Draw:
             game.selector_rects = {}
         game.selector_rects.clear()
 
-        pygame.draw.rect(game.screen, (35, 25, 20), (panel_x, panel_y, panel_w, panel_h), border_radius=8)
-        pygame.draw.rect(game.screen, (75, 55, 40), (panel_x, panel_y, panel_w, panel_h), width=3, border_radius=8)
+        pygame.draw.rect(
+            game.screen,
+            (35, 25, 20),
+            (panel_x, panel_y, panel_w, panel_h),
+            border_radius=8,
+        )
+        pygame.draw.rect(
+            game.screen,
+            (75, 55, 40),
+            (panel_x, panel_y, panel_w, panel_h),
+            width=3,
+            border_radius=8,
+        )
 
         title_font = pygame.font.SysFont("Arial", 14, bold=True)
         title_text = title_font.render("CHOOSE YOUR CARDS", True, (210, 180, 140))
@@ -179,25 +228,33 @@ class Draw:
 
             card_rect = pygame.Rect(cx, cy, card_w, card_h)
             pygame.draw.rect(game.screen, bg_color, card_rect, border_radius=4)
-            pygame.draw.rect(game.screen, (20, 20, 20), card_rect, width=1, border_radius=4)
+            pygame.draw.rect(
+                game.screen, (20, 20, 20), card_rect, width=1, border_radius=4
+            )
 
             game.selector_rects[name] = card_rect
 
             display_name = name
             if len(display_name) > 9:
                 display_name = display_name[:8] + "."
-            
+
             name_surface = font_name.render(display_name, True, text_color)
             name_rect = name_surface.get_rect(center=(cx + card_w // 2, cy + 18))
             game.screen.blit(name_surface, name_rect)
 
             cost_h = 16
             cost_strip_y = (cy + card_h) - cost_h - 2
-            pygame.draw.rect(game.screen, (240, 230, 180) if not is_chosen else (60, 60, 60), 
-                             (cx + 2, cost_strip_y, card_w - 4, cost_h), border_radius=2)
+            pygame.draw.rect(
+                game.screen,
+                (240, 230, 180) if not is_chosen else (60, 60, 60),
+                (cx + 2, cost_strip_y, card_w - 4, cost_h),
+                border_radius=2,
+            )
 
             cost_surface = font_cost.render(str(data["cost"]), True, cost_color)
-            cost_rect = cost_surface.get_rect(center=((cx + card_w // 2), cost_strip_y + (cost_h // 2)))
+            cost_rect = cost_surface.get_rect(
+                center=((cx + card_w // 2), cost_strip_y + (cost_h // 2))
+            )
             game.screen.blit(cost_surface, cost_rect)
 
     @staticmethod

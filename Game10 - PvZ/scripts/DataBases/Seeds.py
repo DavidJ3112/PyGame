@@ -93,7 +93,6 @@ class SeedArcive:
             "is_mushroom": False,
             "is_upgrade": False,
         },
-
         # ==========================================
         # STAGE 2: NIGHT
         # ==========================================
@@ -177,7 +176,6 @@ class SeedArcive:
             "is_mushroom": True,
             "is_upgrade": False,
         },
-
         # ==========================================
         # STAGE 3: POOL
         # ==========================================
@@ -261,7 +259,6 @@ class SeedArcive:
             "is_mushroom": False,
             "is_upgrade": False,
         },
-
         # ==========================================
         # STAGE 4: FOG
         # ==========================================
@@ -345,7 +342,6 @@ class SeedArcive:
             "is_mushroom": True,
             "is_upgrade": False,
         },
-
         # ==========================================
         # STAGE 5: ROOF
         # ==========================================
@@ -429,7 +425,6 @@ class SeedArcive:
             "is_mushroom": False,
             "is_upgrade": False,
         },
-
         # ==========================================
         # CRAZY DAVE'S TWIDDYDINKIES (SHOP UPGRADES)
         # ==========================================
