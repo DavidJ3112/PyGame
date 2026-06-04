@@ -1,0 +1,6 @@
+[2026-06-02 09:13:01] INPUT: Server not found. Enter IP [127.0.0.1] > 
+[2026-06-02 09:13:01] INPUT: Enter Port [Default 5000] > 
+[2026-06-02 09:13:01] INFO: Connecting to 127.0.0.1:5000...
+[2026-06-02 09:13:01] SUCCESS: Joined the game! My GID is 2
+[2026-06-02 09:13:01] INFO: Assigned symbol: o
+[2026-06-02 09:15:15] INFO: o wins the game!

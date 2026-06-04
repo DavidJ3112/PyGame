@@ -66,11 +66,11 @@ class Constructions:
 
                 if is_watered:
                     row.append(
-                        ((c, r), "water", "tilted" if is_tilted else "", "empty")
+                        [(c, r), "water", "tilted" if is_tilted else "", "empty"]
                     )
                 else:
                     row.append(
-                        ((c, r), tile_skin, "tilted" if is_tilted else "", "empty")
+                        [(c, r), tile_skin, "tilted" if is_tilted else "", "empty"]
                     )
 
             lawn.append(row)

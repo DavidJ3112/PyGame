@@ -1,0 +1,12 @@
+[2026-06-02 09:11:54] NOTICE: --- Available Network Interfaces ---
+[2026-06-02 09:11:54] NOTICE: 1. 145.120.198.202
+[2026-06-02 09:11:54] NOTICE: 2. 192.168.71.1
+[2026-06-02 09:11:54] NOTICE: 3. 192.168.128.1
+[2026-06-02 09:11:54] NOTICE: 4. 127.0.0.1
+[2026-06-02 09:11:56] INPUT: Select IP (1-4) [Default 1] > 4
+[2026-06-02 09:11:56] INPUT: Enter Port [Default 5000] > 
+[2026-06-02 09:11:56] INFO: Server running at 127.0.0.1:5000
+[2026-06-02 09:11:56] INFO: Starting server discovery beacon...
+[2026-06-02 09:11:56] INFO: Game Logic Loop Started.
+[2026-06-02 09:11:56] INFO: Discovery beacon active (Brand: DR_TicTacToe)
+[2026-06-02 09:11:56] HEADER: Server Listening on ('127.0.0.1', 5000)

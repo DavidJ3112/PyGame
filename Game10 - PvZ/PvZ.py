@@ -8,6 +8,8 @@ class GameLevel:
         self.save_data = save_data
         self.statistics = statistics
 
+        DEBUG.debug_level = "NONE"
+
         #!^ Temp Data Setup prevent pylance Crying
         self.lawn_offset, self.cell_size = {}, {}
         self.rows, self.cols = (None,None)
@@ -33,6 +35,9 @@ class GameLevel:
         self.planting_location: tuple[int, int] = (-1, -1)
         self.seed_rects: dict[str, pygame.Rect] = {}
 
+        self.seedbar_scale = 1.0
+        self.seedbar_scale_target = 1.0
+
         self.lawn_size, self.lawn_properties = Configs.Get_LawnConfigs()
         make_slots = lambda: {f"seedslot{i}": None for i in range(1, 11)}
         self.active_seeds = make_slots()
@@ -40,6 +45,12 @@ class GameLevel:
         self.game_lawn: dict = {}
 
         self.unlocked_slots = self.save_data["unlocked_slots"]
+
+        self.SPRITES = {
+            'Plants': UTILS.load_images_dict('Plants'),
+            'Zombies': UTILS.load_images_dict('Zombies'),
+            'Projectiles': UTILS.load_images_dict('Projectiles'),
+        }
         
 
     def loop(self, current_level):
@@ -53,18 +64,25 @@ class GameLevel:
 
             if result:
                 return result
+            
+            self.seedbar_scale += (self.seedbar_scale_target - self.seedbar_scale) * 0.12
 
-            Draw.draw_SeedBar(self)
-
+            ## Level Draw
             if self.Running_Level:
                 Draw.draw_lawn(self)
                 Draw.draw_plants(self)
                 Draw.draw_zombies(self)
+                self.seedbar_scale_target = 1.2
             else:
                 Draw.draw_seed_selector(self)
+                self.seedbar_scale_target = 1.0
 
+            ## Planting Draw
             if self.planting:
                 Draw.draw_planting(self, self.planting_seed)
+            
+            ## HUD Draw
+            Draw.draw_SeedBar(self)
 
             pygame.display.flip()
 
@@ -84,14 +102,18 @@ class GameLevel:
 
                 if event.key == pygame.K_F1:
                     self.Running_Level = not self.Running_Level
-            
+
             if event.type == pygame.MOUSEBUTTONDOWN:
                 mx, my = pygame.mouse.get_pos()
                 
                 if self.planting:
                     for (x, y), rect in self.board_rects.items():
                         if rect.collidepoint(mx ,my):
-                            print(x, y)
+                            Lawn_cell = self.game_lawn["Game_Grid"][y][x]
+                            Lawn_cell[3] = self.planting_seed
+
+                            DEBUG.sendmsg("LOW", Lawn_cell)
+                            
 
                 for slot, rect in self.seed_rects.items():
                     if rect.collidepoint(mx, my):

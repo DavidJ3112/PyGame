@@ -1,0 +1,27 @@
+[2026-06-02 09:12:19] NOTICE: --- Available Network Interfaces ---
+[2026-06-02 09:12:19] NOTICE: 1. 192.168.128.1
+[2026-06-02 09:12:19] NOTICE: 2. 192.168.71.1
+[2026-06-02 09:12:19] NOTICE: 3. 145.120.198.202
+[2026-06-02 09:12:19] NOTICE: 4. 127.0.0.1
+[2026-06-02 09:12:30] INPUT: Select IP (1-4) [Default 1] > 4
+[2026-06-02 09:12:31] INPUT: Enter Port [Default 5000] > 
+[2026-06-02 09:12:31] INFO: Server running at 127.0.0.1:5000
+[2026-06-02 09:12:31] INFO: Starting server discovery beacon...
+[2026-06-02 09:12:31] INFO: Game Logic Loop Started.
+rand: DR_TicTacToe)
+[2026-06-02 09:12:31] HEADER: Server Listening on ('127.0.0.1', 5000)
+[2026-06-02 09:12:53] INFO: GID 1 connected from ('127.0.0.1', 42820)
+[2026-06-02 09:12:53] SUCCESS: Player GID 1 connected.
+[2026-06-02 09:13:01] INFO: GID 2 connected from ('127.0.0.1', 42821)
+[2026-06-02 09:13:01] SUCCESS: Player GID 2 connected.
+[2026-06-02 09:14:58] SUCCESS: Move accepted: x at (0, 0)
+[2026-06-02 09:15:07] SUCCESS: Move accepted: o at (2, 2)
+[2026-06-02 09:15:08] SUCCESS: Move accepted: x at (2, 1)
+[2026-06-02 09:15:09] SUCCESS: Move accepted: o at (1, 1)
+[2026-06-02 09:15:11] SUCCESS: Move accepted: x at (0, 2)
+[2026-06-02 09:15:12] SUCCESS: Move accepted: o at (1, 0)
+[2026-06-02 09:15:14] SUCCESS: Move accepted: x at (2, 0)
+[2026-06-02 09:15:15] SUCCESS: Move accepted: o at (1, 2)
+[2026-06-02 09:15:15] INFO: o wins the game!
+[2026-06-02 09:15:18] WARN: Player GID 1 disconnected.
+[2026-06-02 09:15:19] WARN: Player GID 2 disconnected.
