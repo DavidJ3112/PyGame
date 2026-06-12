@@ -113,7 +113,7 @@ class Draw:
         font_name  = pygame.font.SysFont("Arial", name_size, bold=True)
         font_cost  = pygame.font.SysFont("Arial", cost_size, bold=True)
 
-        # ── Sun card ──────────────────────────────────────────────────────────
+        #!# ── Sun card ──────────────────────────────────────────────────────────
         sun_x = bar_x + padding
         sun_y = start_y
 
@@ -148,7 +148,7 @@ class Draw:
             sun_count_surface.get_rect(center=(sun_x + sun_box_w // 2, cost_strip_y + cost_h // 2))
         )
 
-        # ── Seed slot cards ───────────────────────────────────────────────────
+        #!# ── Seed slot cards ───────────────────────────────────────────────────
         slots_start_x = sun_x + sun_box_w + padding
         slots_keys = [f"seedslot{i}" for i in range(1, slots_count + 1)]
         game.seed_rects.clear()
@@ -188,11 +188,17 @@ class Draw:
             if plant_id is not None:
                 plant_sprites = game.SPRITES.get("Plants")
                 plant_img = isinstance(plant_sprites, dict) and plant_sprites.get(str(plant_id))
+                
                 if plant_img:
                     max_size = max(4, min(card_w - 6, img_area_h - 4))
                     scaled = pygame.transform.smoothscale(plant_img, (max_size, max_size))
                     game.screen.blit(scaled, scaled.get_rect(center=(p_cx, p_cy)))
                 else:
+                    # Draw visual placeholder circle
+                    circle_r = min(card_w, img_area_h) // 2 - 4
+                    pygame.draw.circle(game.screen, (46, 204, 113), (p_cx, p_cy), circle_r)
+                    pygame.draw.circle(game.screen, (255, 255, 255), (p_cx, p_cy), circle_r, width=1)
+                    
                     display_name = str(plant_id)
                     if len(display_name) > 8:
                         display_name = display_name[:7] + "."
@@ -297,15 +303,31 @@ class Draw:
 
             game.selector_rects[name] = card_rect
 
+            cost_h = 16
+            img_area_h = card_h - cost_h - 4
+            p_cx = cx + card_w // 2
+            p_cy = cy + img_area_h // 2 + 6
+
+            plant_sprites = game.SPRITES.get("Plants")
+            plant_img = isinstance(plant_sprites, dict) and plant_sprites.get(str(name))
+
+            if plant_img:
+                max_size = max(4, min(card_w - 6, img_area_h - 4))
+                scaled = pygame.transform.smoothscale(plant_img, (max_size, max_size))
+                game.screen.blit(scaled, scaled.get_rect(center=(p_cx, p_cy)))
+            # else:
+            #     circle_r = min(card_w - 12, img_area_h - 6) // 2
+            #     pygame.draw.circle(game.screen, (46, 204, 113), (p_cx, p_cy), circle_r)
+            #     pygame.draw.circle(game.screen, (255, 255, 255), (p_cx, p_cy), circle_r, width=1)
+
             display_name = name
             if len(display_name) > 9:
                 display_name = display_name[:8] + "."
 
             name_surface = font_name.render(display_name, True, text_color)
-            name_rect = name_surface.get_rect(center=(cx + card_w // 2, cy + 18))
+            name_rect = name_surface.get_rect(center=(cx + card_w // 2, cy + 10))
             game.screen.blit(name_surface, name_rect)
 
-            cost_h = 16
             cost_strip_y = (cy + card_h) - cost_h - 2
             pygame.draw.rect(
                 game.screen,
@@ -334,30 +356,32 @@ class Draw:
             for data in row:
                 DEBUG.sendmsg("HIGH", f"Plant: {data[3]}, Pos: {data[0]}")
 
-                x = data[0][0] * game.cell_size[0] + game.lawn_offset[0] +30
-                y = data[0][1] * game.cell_size[1] + game.lawn_offset[1] +30
+                x = data[0][0] * game.cell_size[0] + game.lawn_offset[0] + 30
+                y = data[0][1] * game.cell_size[1] + game.lawn_offset[1] + 30
 
                 font = pygame.font.SysFont("Arial", 12, bold=True)
                 plant_sprites = game.SPRITES.get("Plants")
 
                 if data[3] == "empty":
                     continue
-                
+
+                #!# ── Draw Img ───────────────────────────────────────────────────
                 if isinstance(plant_sprites, dict) and data[3] in plant_sprites:
                     img = plant_sprites[data[3]]
                     img_rect = img.get_rect(topleft=(x, y))
                     game.screen.blit(img, img_rect)
-                    
+
+                #!# ── Draw Place Holder ───────────────────────────────────────────────────
                 else:
                     pygame.draw.circle(game.screen, (46, 204, 113), (x, y), 22)
                     pygame.draw.circle(game.screen, (255, 255, 255), (x, y), 22, width=2)
-                    
+
                     text_surface = font.render(f"{data[3]}", True, (255, 255, 255))
                     text_rect = text_surface.get_rect(topleft=(x, y - 35))
-                    
+
                     shadow_surface = font.render(f"{data[3]}", True, (0, 0, 0))
                     shadow_rect = shadow_surface.get_rect(topleft=(x + 1, y - 34))
-                    
+
                     game.screen.blit(shadow_surface, shadow_rect)
                     game.screen.blit(text_surface, text_rect)
 
@@ -372,21 +396,23 @@ class Draw:
 
         plant_sprites = game.SPRITES.get("Plants")
 
+        #!# ── Draw Img ───────────────────────────────────────────────────
         if isinstance(plant_sprites, dict) and selected_seed in plant_sprites:
             img = plant_sprites[selected_seed]
             img_rect = img.get_rect(center=(mx, my))
             game.screen.blit(img, img_rect)
-            
+
+        #!# ── Draw Place Holder ───────────────────────────────────────────────────
         else:
             pygame.draw.circle(game.screen, (46, 204, 113), (mx, my), 22)
             pygame.draw.circle(game.screen, (255, 255, 255), (mx, my), 22, width=2)
-            
+
             text_surface = font.render(f"Planting: {selected_seed}", True, (255, 255, 255))
             text_rect = text_surface.get_rect(center=(mx, my - 35))
-            
+
             shadow_surface = font.render(f"Planting: {selected_seed}", True, (0, 0, 0))
             shadow_rect = shadow_surface.get_rect(center=(mx + 1, my - 34))
-            
+
             game.screen.blit(shadow_surface, shadow_rect)
             game.screen.blit(text_surface, text_rect)
 

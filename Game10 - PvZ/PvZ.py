@@ -10,7 +10,7 @@ class GameLevel:
 
         DEBUG.debug_level = "NONE"
 
-        #!^ Temp Data Setup prevent pylance Crying
+        #!# Temp Data Setup prevent pylance Crying
         self.lawn_offset, self.cell_size = {}, {}
         self.rows, self.cols = (None,None)
         self.selector_rects = {}
