@@ -1,0 +1,28 @@
+[2026-07-01 11:55:21] NOTICE: --- Available Network Interfaces ---
+[2026-07-01 11:55:21] NOTICE: 1. 145.120.199.50
+[2026-07-01 11:55:21] NOTICE: 2. 192.168.104.1
+[2026-07-01 11:55:21] NOTICE: 3. 192.168.90.1
+[2026-07-01 11:55:21] NOTICE: 4. 127.0.0.1
+[2026-07-01 11:55:24] INPUT: Select IP (1-4) [Default 1] > 4
+[2026-07-01 11:55:24] INPUT: Enter Port [Default 5000] > 
+[2026-07-01 11:55:24] INFO: Server running at 127.0.0.1:5000
+[2026-07-01 11:55:24] INFO: Starting server discovery beacon...
+[2026-07-01 11:55:24] INFO: Game Logic Loop Started.
+[2026-07-01 11:55:24] INFO: Discovery beacon active (Brand: DR_TicTacToe)
+[2026-07-01 11:55:24] HEADER: Server Listening on ('127.0.0.1', 5000)
+[2026-07-01 11:56:08] INFO: GID 1 connected from ('127.0.0.1', 48823)
+[2026-07-01 11:56:08] SUCCESS: Player GID 1 connected.
+[2026-07-01 11:56:20] INFO: GID 2 connected from ('127.0.0.1', 16908)
+[2026-07-01 11:56:20] SUCCESS: Player GID 2 connected.
+[2026-07-01 11:56:26] SUCCESS: Move accepted: x at (0, 0)
+[2026-07-01 11:56:28] SUCCESS: Move accepted: o at (2, 0)
+[2026-07-01 11:56:31] SUCCESS: Move accepted: x at (1, 1)
+[2026-07-01 11:56:33] SUCCESS: Move accepted: o at (1, 0)
+[2026-07-01 11:56:35] SUCCESS: Move accepted: x at (0, 2)
+[2026-07-01 11:56:35] WARN: Invalid move attempted by 1
+[2026-07-01 11:56:35] WARN: Early move attempted by 1
+[2026-07-01 11:56:37] SUCCESS: Move accepted: o at (2, 1)
+[2026-07-01 11:56:38] SUCCESS: Move accepted: x at (0, 1)
+[2026-07-01 11:56:38] INFO: x wins the game!
+[2026-07-01 11:56:41] WARN: Player GID 1 disconnected.
+[2026-07-01 11:56:43] WARN: Player GID 2 disconnected.
